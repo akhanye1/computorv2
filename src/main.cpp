@@ -72,63 +72,18 @@ int		polynomialDegree(polynomial *equation) {
 	return (polDegree);
 }
 
-int		main(int ac, char **av) {
-	polynomial	*equation = new polynomial();
-	int			correct_index = 1;
-
-	Validate validation;
-	if (ac == 3) {
-		string input(av[1]);
-		string input2(av[2]);
-		if (!input.compare("-d")) {
-			correct_index = 2;
-			equation->debugOn();
-		}
-		else if (!input2.compare("-d")) {
-			correct_index = 1;
-			equation->debugOn();
+int		main(void) {
+	string	input;
+	bool	proceed = true;
+	while (proceed) {
+		cout << "> ";
+		getline(cin, input);
+		if (!input.compare("exit")) {
+			proceed = false;
 		}
 		else {
-			cout << "Usage: .computer <polynimial> [-d]" << endl;
-			return (1);	
+			cout << input << endl;
 		}
-	}
-	else if (ac != 2) {
-		cout << "Usage: .computer <polynimial> [-d]" << endl;
-		return (1);
-	}
-	else {
-		correct_index = 1;
-	}
-	if (!validation.isPolynomialValid(av[correct_index], equation)) {
-		cout << "Polynomial expression is incorrect" << endl;
-		return (1);
-	}
-	equation->showExpression("");
-	equation->multiplyVariables();
-	if (!reducedOk(equation)) {
-		cout << "Error reducing polynomial";
-		return (1);
-	}
-	equation->bodmasRule(0);
-	equation->addRemaining(0);
-	if (polynomialDegree(equation) > 2) {
-		cout << "The Polynomial degree is stricly greater than 2, I can't solve." << endl;
-		return (1);
-	}
-	if (polynomialDegree(equation) == 1) {
-		if (equation->counter < 1 && equation->counter > 2) {
-			cout << "Cannot solve expression" << endl;
-			return (1);
-		}
-		equation->solveExpression();
-	}
-	else if (polynomialDegree(equation) == 2) {
-		if (equation->counter > 3) {
-			cout << "Cannot solve expression" << endl;
-			return (1);
-		}
-		equation->solveQuadradic();
 	}
 	return (0);
 }

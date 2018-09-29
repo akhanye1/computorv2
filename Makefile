@@ -1,4 +1,4 @@
-NAME = computor
+NAME = computorv2
 
 GCC = g++
 
