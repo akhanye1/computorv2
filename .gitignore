@@ -1,0 +1,6 @@
+computor.exe
+.vscode/
+.vscode/*
+*.stackdump
+*.dSYM
+computor
