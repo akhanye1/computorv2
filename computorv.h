@@ -9,6 +9,7 @@
 #include "headers/polynomial.h"
 #include "headers/term.h"
 #include "headers/validate.h"
+#include "headers/instruction.hpp"
 
 using namespace std;
 
