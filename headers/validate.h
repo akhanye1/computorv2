@@ -3,25 +3,30 @@
 
 #include "../computorv.h"
 
+class   Instruction;
+
 class	Validate {
     private:
-        void            splitString(char *poly);
+        void            splitString(string poly);
         void            correctSplit();
         void            splitMixedTerm(string str);
         vector<string>  tempStrings;
         vector<string>  correctStrings;
         bool            checkPolynomialAuthentacity();
         void            splitForAlphaAndDigit(string str);
+        void            splitForAlpha(string str);
+        void            splitForDigit(string str);
         void            splitForEqualSign(string str);
         void            splitForOperand(string str);
         void            addexpression(polynomial *equation);
         static char     oneVar;
         bool            sameVariables(char *poly);
         bool            foundOperator(string str);
+        bool            checkVariables(polynomial *equation, Instruction instruction);
 
 	public:
         Validate(void);
-		bool	        isPolynomialValid(char *poly, polynomial *equation);
+		bool	        isPolynomialValid(string poly, polynomial *equation, Instruction instruction);
         bool            isTermValid(char *term, polynomial *equation, int *termValid);
         static bool     isValidVariable(string str);
         static bool     isValidFunction(string str);

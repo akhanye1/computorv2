@@ -8,7 +8,7 @@ using namespace std;
 class term {
     private:
         float       constant;
-        char        variable;
+        string      variable;
         int         exponent;
         bool        isConstant;
         bool        isVariable;
@@ -40,7 +40,7 @@ class term {
         int     getExponent() const;
         int     getSide() const;
         float   getConstant() const;
-        char    getVariable() const;
+        string  getVariable() const;
         char    getOperand() const;
         char    getOrder() const ;
         bool    sameAs(term compareTerm);
@@ -49,5 +49,6 @@ class term {
         void    swapTerm(term rightTerm);
         void    matchTerm(term rhs);
         float   getCorrectValue() const;
+        void    replaceVariable(float value);
 };
 #endif

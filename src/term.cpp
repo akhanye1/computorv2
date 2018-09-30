@@ -70,27 +70,31 @@ void    term::fillTerm(string str) {
     string tempString;
 
     if (isdigit(str[0])) {
-        if (alphaFound(str)) {
-            tempString = str.substr(0, returnAlphaIndex(str));
-            this->constant = atof(tempString.c_str());
-            this->isConstant = true;
-            return (fillTerm(str.substr(returnAlphaIndex(str))));
-        }
-        else {
-            this->constant = atof(str.c_str());
-            this->isConstant = true;
-        }
+        this->constant = atof(str.c_str());
+        this->isConstant = true;
+        // if (alphaFound(str)) {
+        //     tempString = str.substr(0, returnAlphaIndex(str));
+        //     this->constant = atof(tempString.c_str());
+        //     this->isConstant = true;
+        //     return (fillTerm(str.substr(returnAlphaIndex(str))));
+        // }
+        // else {
+        //     this->constant = atof(str.c_str());
+        //     this->isConstant = true;
+        // }
     }
     else if (isalpha(str[0])) {
-        if (numberFound(str)) {
-            this->variable = str[0];
-            this->isVariable = true;
-            return (fillTerm(str.substr(1)));
-        }
-        else {
-            this->variable = str[0];
-            this->isVariable = true;
-        }
+        this->variable = str;
+        this->isVariable = true;
+        // if (numberFound(str)) {
+        //     this->variable = str[0];
+        //     this->isVariable = true;
+        //     return (fillTerm(str.substr(1)));
+        // }
+        // else {
+        //     this->variable = str[0];
+        //     this->isVariable = true;
+        // }
     }
     else if (str[0] == '^') {
         if (str[1]) {
@@ -99,14 +103,14 @@ void    term::fillTerm(string str) {
             this->isExponent = true;
         }
     }
-    if (!this->isConstant) {
-        this->constant = 1;
-        this->isConstant = true;
-    }
-    if (this->isVariable && !this->isExponent) {
-        this->isExponent = true;
-        this->exponent = 1;
-    }
+    // if (!this->isConstant) {
+    //     this->constant = 1;
+    //     this->isConstant = true;
+    // }
+    // if (this->isVariable && !this->isExponent) {
+    //     this->isExponent = true;
+    //     this->exponent = 1;
+    // }
 }
 
 term::term(string str, char operand, int termSide) {
@@ -221,7 +225,7 @@ void    term::toString() {
 }
 
 float   term::getConstant() const { return (this->constant); }
-char    term::getVariable() const { return (this->variable); }
+string  term::getVariable() const { return (this->variable); }
 char    term::getOperand() const { return (this->operand); }
 int     term::getSide() const { return (this->termSide); }
 int     term::getExponent() const { return (this->exponent); }
@@ -307,4 +311,11 @@ void    term::swapTerm(term addTerm) {
 
 float   term::getCorrectValue() const {
     return (getRealValue(*this));
+}
+
+void    term::replaceVariable(float value) {
+    this->isVariable = false;
+    this->isExponent = false;
+    this->isConstant = true;
+    this->constant = value;
 }

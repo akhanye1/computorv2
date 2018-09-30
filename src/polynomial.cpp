@@ -17,8 +17,8 @@ bool    polynomial::isDebug() {
     return (debug);
 }
 
-term        polynomial::getTerm(int index) {
-    return (this->terms.at(index));
+term        *polynomial::getTerm(int index) {
+    return (&this->terms.at(index));
 }
 
 void        polynomial::changeSide(term tempTerm, int index) {
@@ -159,7 +159,7 @@ void    polynomial::showAll() {
 
     cout << "START START START" << endl;
     while (++index < counter) {
-        this->getTerm(index).toString();
+        this->getTerm(index)->toString();
     }
     cout << "END END END" << endl;
 }

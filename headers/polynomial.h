@@ -21,7 +21,7 @@ class polynomial {
         polynomial(void);
         bool            addTerm(term *Term);
         void            toString(void);
-        term            getTerm(int index);
+        term            *getTerm(int index);
         void            moveLeft(term tempTerm, int changeIndex, int removeIndex);
         void            changeSide(term tempTerm, int index);
         static int      counter;

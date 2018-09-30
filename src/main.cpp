@@ -6,7 +6,7 @@ bool	setValue(polynomial *equation, term oneTerm, int index) {
 
 	i = -1;
 	while (++i < equation->counter) {
-		tempTerm = equation->getTerm(i);
+		tempTerm = *equation->getTerm(i);
 		if (tempTerm.getSide() > 0) {
 			equation->changeSide(oneTerm, index);
 			equation->showExpression("Swap term");
@@ -31,7 +31,7 @@ bool	reducedOk(polynomial *equation) {
 	equation->simplifyRight();
 	index = -1;
 	while (++index < equation->counter) {
-		oneTerm = equation->getTerm(index);
+		oneTerm = *equation->getTerm(index);
 		if (oneTerm.getSide() > 0) {
 			setValue(equation, oneTerm, index);
 			index = -1;
@@ -40,7 +40,7 @@ bool	reducedOk(polynomial *equation) {
 	maxRight = 0;
 	index = -1;
 	while (++index < equation->counter) {
-		if (equation->getTerm(index).getSide() > 0) {
+		if (equation->getTerm(index)->getSide() > 0) {
 			maxRight++;
 		}
 	}
@@ -61,7 +61,7 @@ int		polynomialDegree(polynomial *equation) {
 	len = -1;
 	polDegree = 1;
 	while (++len < equation->counter) {
-		oneTerm = equation->getTerm(len);
+		oneTerm = *equation->getTerm(len);
 		if (oneTerm.getSide() > 0) {
 			return (polDegree);
 		}

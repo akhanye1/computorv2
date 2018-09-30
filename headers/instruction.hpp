@@ -10,35 +10,41 @@ enum    {VARIABLE, MATRIX, FUNCTION, IMAGINERY};
 class Instruction {
     private:
         vector<string>      commands;
-        static vector<Instruction> instructions;
         Instruction         *tempInstruction;
         string              value;
         float               floatValue;
+        bool                isPrint;
         int                 instructionType;
         bool                valid;
         string              command;
         string              instruction;
         void                splitString(string str, char deliminator, vector<string> &tempVector);
         bool                verifyInstruction();
-        bool                checkRightHandSide(vector<string> rhs, bool isFunction);
+        bool                checkRightHandSide(vector<string> rhs, bool isFunction, string rhs_string);
+        bool                setVariableData(vector<string> instructions, string instr, string rhs);
+        bool                checkOneValue(vector<string> rhs);
 
 
     public:
         Instruction();
         Instruction(string str);
+        static vector<Instruction> instructions;
         string              getValue() const;
+        Instruction&        operator=(Instruction const &rhs);
         int                 getType() const;
         void                setInstruction(int instructionType);
         bool                isValid() const;
         bool                compareCommand(string command) const;
         void                setCommand(string command);
         string              getInstruction() const;
-        bool                findInstruction(string str);
+        Instruction         *findInstruction(string str);
         float               getfloatValue() const;
         void                setFloatValue(float value);
         void                setInstructionHead(string head);
-        void                setInstructionData(Instruction *data);
+        void                setInstructionData(Instruction data);
         string              getCommand() const;
+        bool                printValue() const;
+        void                showAllInstructions();
 };
 
 #endif

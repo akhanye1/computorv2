@@ -8,6 +8,7 @@ Instruction::Instruction() {
 
 Instruction::Instruction(string str) {
     this->splitString(str, '=', this->commands);
+    this->isPrint = false;
     if (this->commands.size() != 2) {
         this->valid = false;
         return ;
@@ -15,20 +16,83 @@ Instruction::Instruction(string str) {
     this->valid = this->verifyInstruction();
 }
 
-bool    Instruction::checkRightHandSide(vector<string> rhs, bool isFunction) {
-    float   tempFloat;
-    if (!isFunction) {
-        if (rhs.size() == 1) {
-            if (Validate::isNumeric(rhs.at(0))) {
-                tempFloat = atof(rhs.at(0).c_str());
-                tempInstruction = new Instruction();
-                tempInstruction->setInstruction(VARIABLE);
-                tempInstruction->setFloatValue(tempFloat);
-                return (true);
-            }
+Instruction& Instruction::operator=(Instruction const &rhs) {
+    this->setInstructionData(rhs);
+    return (*this);
+}
+
+bool    Instruction::checkOneValue(vector<string> rhs) {
+    if (Validate::isNumeric(rhs.at(0))) {
+        tempInstruction = new Instruction();
+        tempInstruction->setInstruction(VARIABLE);
+        tempInstruction->setFloatValue(atof(rhs.at(0).c_str()));
+        return (true);
+    }
+    else if (!rhs.at(0).compare("?")) {
+        tempInstruction = new Instruction();
+        this->isPrint = true;
+        return (true);
+    }
+    else if (Validate::isValidVariable(rhs.at(0))) {
+        if (this->findInstruction(rhs.at(0)) != NULL) {
+            tempInstruction = new Instruction();
+            tempInstruction->setFloatValue(findInstruction(rhs.at(0))->getfloatValue());
+            return (true);
         }
     }
-    return (true);
+    return (false);
+}
+
+bool    Instruction::checkRightHandSide(vector<string> rhs, bool isFunction, string rhs_str) {
+    if (!isFunction) {
+        if (rhs.size() == 1) {
+            return (this->checkOneValue(rhs));
+        }
+        else {
+            polynomial *equation = new polynomial();
+            Validate validator;
+            if (!validator.isPolynomialValid(rhs_str, equation, *this)) {
+                cout << "Polinomial failed" << endl;
+                return (false);
+            }
+            cout << "polynomial passed" << endl;
+            equation->showAll();
+            return (true);
+        }
+    }
+    return (false);
+}
+
+bool    Instruction::setVariableData(vector<string> rightInstructions, string str, string rhs) {
+    tempInstruction = NULL;
+    if (!this->checkRightHandSide(rightInstructions, false, rhs)) {
+        return (false);
+    }
+    if (tempInstruction == NULL) {
+        return (false);
+    }
+    if (this->isPrint) {
+        if (findInstruction(str) == NULL) {
+            return (false);
+        }
+        else {
+            this->setInstructionData(*findInstruction(str));
+            this->isPrint = true;
+        }
+        return (true);
+    }
+    tempInstruction->setInstructionHead(str);
+    if (this->findInstruction(str) == NULL) {
+        this->setInstructionData(*tempInstruction);
+        instructions.push_back(*this);
+        return (true);
+    }
+    else {
+        findInstruction(str)->setInstructionData(*tempInstruction);
+        this->setInstructionData(*tempInstruction);
+        return (true);
+    }
+    return (false);
 }
 
 bool    Instruction::verifyInstruction() {
@@ -44,21 +108,7 @@ bool    Instruction::verifyInstruction() {
             return (false);
         }
         if (Validate::isValidVariable(str)) {
-            tempInstruction = NULL;
-            if (!this->checkRightHandSide(rightInstructions, false)) {
-                return (false);
-            }
-            if (tempInstruction == NULL) {
-                return (false);
-            }
-            tempInstruction->setInstructionHead(str);
-            if (!this->findInstruction(str)) {
-                //*this = this->findInstruction(str);
-                // this->setInstructionData(this->findInstruction(str));
-            }
-            else {
-                // this->setInstructionData(tempInstruction);
-            }
+            return (setVariableData(rightInstructions, str, commands.at(1)));
         }
     }
     else if (rightInstructions.size() == 1) {
@@ -69,12 +119,12 @@ bool    Instruction::verifyInstruction() {
     return (true);
 }
 
-void    Instruction::setInstructionData(Instruction *data) {
-    this->value = data->getValue();
-    this->floatValue= data->getfloatValue();
-    this->instructionType = data->getType();
-    this->instruction = data->getInstruction();
-    this->command = data->getCommand();
+void    Instruction::setInstructionData(Instruction data) {
+    this->value = data.getValue();
+    this->floatValue= data.getfloatValue();
+    this->instructionType = data.getType();
+    this->instruction = data.getInstruction();
+    this->command = data.getCommand();
 }
 
 string  Instruction::getCommand() const {
@@ -145,21 +195,26 @@ float       Instruction::getfloatValue() const {
      this->floatValue = val;
  }
 
-bool Instruction::findInstruction(string str) {
+Instruction *Instruction::findInstruction(string str) {
     int index = -1;
-    if (str.length() > 0) {
-
-    }
     int len = (int)instructions.size();
 
-    if (++index < len) {
+    while (++index < len) {
         if (instructions.at(index).compareCommand(str)) {
-            // return (&instructions.at(index));
-            this->setInstructionData(&instructions.at(index));
-            return (true);
+            return (&instructions.at(index));
         }
     }
-    return (false);
+    return (NULL);
+}
+
+void        Instruction::showAllInstructions() {
+    int index = -1;
+    int len = (int)instructions.size();
+
+    while (++index < len) {
+        cout << "Instruction : " << instructions.at(index).getInstruction();
+        cout << " " << instructions.at(index).getfloatValue() << endl;
+    }
 }
 
 void        Instruction::setInstructionHead(string head) {
