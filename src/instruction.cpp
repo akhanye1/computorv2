@@ -16,11 +16,14 @@ Instruction::Instruction(string str) {
 }
 
 bool    Instruction::checkRightHandSide(vector<string> rhs, bool isFunction) {
+    float   tempFloat;
     if (!isFunction) {
         if (rhs.size() == 1) {
             if (Validate::isNumeric(rhs.at(0))) {
-                this->instructionType = VARIABLE;
-                this->floatValue = atof(rhs.at(0).c_str());
+                tempFloat = atof(rhs.at(0).c_str());
+                tempInstruction = new Instruction();
+                tempInstruction->setInstruction(VARIABLE);
+                tempInstruction->setFloatValue(tempFloat);
                 return (true);
             }
         }
@@ -41,10 +44,20 @@ bool    Instruction::verifyInstruction() {
             return (false);
         }
         if (Validate::isValidVariable(str)) {
+            tempInstruction = NULL;
             if (!this->checkRightHandSide(rightInstructions, false)) {
-                this->instruction = str;
-                instructions.push_back(*this);
                 return (false);
+            }
+            if (tempInstruction == NULL) {
+                return (false);
+            }
+            tempInstruction->setInstructionHead(str);
+            if (!this->findInstruction(str)) {
+                //*this = this->findInstruction(str);
+                // this->setInstructionData(this->findInstruction(str));
+            }
+            else {
+                // this->setInstructionData(tempInstruction);
             }
         }
     }
@@ -54,6 +67,18 @@ bool    Instruction::verifyInstruction() {
         }
     }
     return (true);
+}
+
+void    Instruction::setInstructionData(Instruction *data) {
+    this->value = data->getValue();
+    this->floatValue= data->getfloatValue();
+    this->instructionType = data->getType();
+    this->instruction = data->getInstruction();
+    this->command = data->getCommand();
+}
+
+string  Instruction::getCommand() const {
+    return (this->command);
 }
 
 string  trimString(string str) {
@@ -97,10 +122,15 @@ bool        Instruction::isValid() const {
 }
 
 bool        Instruction::compareCommand(string command) const {
-    if (!this->command.compare(command)) {
-        return (true);
+    int index = -1;
+    int len = (int)command.length();
+
+    while (++index < len && index < (int)this->instruction.length()) {
+        if (tolower(this->getInstruction()[index]) != tolower(command[index])) {
+            return (false);
+        }
     }
-    return (false);
+    return (index == (int)command.length() && index == (int)this->instruction.length());
 }
 
 string      Instruction::getInstruction() const {
@@ -109,4 +139,29 @@ string      Instruction::getInstruction() const {
 
 float       Instruction::getfloatValue() const {
     return (this->floatValue);
+}
+
+ void        Instruction::setFloatValue(float val) {
+     this->floatValue = val;
+ }
+
+bool Instruction::findInstruction(string str) {
+    int index = -1;
+    if (str.length() > 0) {
+
+    }
+    int len = (int)instructions.size();
+
+    if (++index < len) {
+        if (instructions.at(index).compareCommand(str)) {
+            // return (&instructions.at(index));
+            this->setInstructionData(&instructions.at(index));
+            return (true);
+        }
+    }
+    return (false);
+}
+
+void        Instruction::setInstructionHead(string head) {
+    this->instruction = head;
 }

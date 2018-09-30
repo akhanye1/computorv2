@@ -11,7 +11,7 @@ class Instruction {
     private:
         vector<string>      commands;
         static vector<Instruction> instructions;
-        Instruction         tempInstruction;
+        Instruction         *tempInstruction;
         string              value;
         float               floatValue;
         int                 instructionType;
@@ -33,8 +33,12 @@ class Instruction {
         bool                compareCommand(string command) const;
         void                setCommand(string command);
         string              getInstruction() const;
-        Instruction         findInstruction(string str);
+        bool                findInstruction(string str);
         float               getfloatValue() const;
+        void                setFloatValue(float value);
+        void                setInstructionHead(string head);
+        void                setInstructionData(Instruction *data);
+        string              getCommand() const;
 };
 
 #endif
