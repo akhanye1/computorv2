@@ -25,5 +25,6 @@ class	Validate {
         bool            isTermValid(char *term, polynomial *equation, int *termValid);
         static bool     isValidVariable(string str);
         static bool     isValidFunction(string str);
+        static bool     isNumeric(string str);
 };
 #endif

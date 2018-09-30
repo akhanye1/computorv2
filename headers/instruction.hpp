@@ -10,14 +10,18 @@ enum    {VARIABLE, MATRIX, FUNCTION, IMAGINERY};
 class Instruction {
     private:
         vector<string>      commands;
-        vector<Instruction> instructions;
+        static vector<Instruction> instructions;
+        Instruction         tempInstruction;
         string              value;
+        float               floatValue;
         int                 instructionType;
         bool                valid;
         string              command;
         string              instruction;
         void                splitString(string str, char deliminator, vector<string> &tempVector);
         bool                verifyInstruction();
+        bool                checkRightHandSide(vector<string> rhs, bool isFunction);
+
 
     public:
         Instruction();
@@ -30,6 +34,7 @@ class Instruction {
         void                setCommand(string command);
         string              getInstruction() const;
         Instruction         findInstruction(string str);
+        float               getfloatValue() const;
 };
 
 #endif

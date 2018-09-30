@@ -1,5 +1,7 @@
 #include "../computorv.h"
 
+vector<Instruction> Instruction::instructions;
+
 Instruction::Instruction() {
     this->valid = false;
 }
@@ -13,6 +15,19 @@ Instruction::Instruction(string str) {
     this->valid = this->verifyInstruction();
 }
 
+bool    Instruction::checkRightHandSide(vector<string> rhs, bool isFunction) {
+    if (!isFunction) {
+        if (rhs.size() == 1) {
+            if (Validate::isNumeric(rhs.at(0))) {
+                this->instructionType = VARIABLE;
+                this->floatValue = atof(rhs.at(0).c_str());
+                return (true);
+            }
+        }
+    }
+    return (true);
+}
+
 bool    Instruction::verifyInstruction() {
     vector<string>  leftInstructions;
     vector<string>  rightInstructions;
@@ -24,6 +39,13 @@ bool    Instruction::verifyInstruction() {
         str = leftInstructions.at(0);
         if (!Validate::isValidVariable(str) && !Validate::isValidFunction(str)) {
             return (false);
+        }
+        if (Validate::isValidVariable(str)) {
+            if (!this->checkRightHandSide(rightInstructions, false)) {
+                this->instruction = str;
+                instructions.push_back(*this);
+                return (false);
+            }
         }
     }
     else if (rightInstructions.size() == 1) {
@@ -83,4 +105,8 @@ bool        Instruction::compareCommand(string command) const {
 
 string      Instruction::getInstruction() const {
     return (this->instruction);
+}
+
+float       Instruction::getfloatValue() const {
+    return (this->floatValue);
 }

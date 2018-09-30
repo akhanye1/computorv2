@@ -351,5 +351,21 @@ bool	Validate::isValidFunction(string str) {
 	return (isValidVariable(variableTemp));
 }
 
+bool	Validate::isNumeric(string str) {
+	int		index = -1;
+	int		len = (int)str.length();
+	int		periodCount = 0;
+
+	while (++index < len) {
+		if (!isdigit(str[index]) && str[index] != '.' && periodCount < 1) {
+			return (false);
+		}
+		if (str[index] == '.') {
+			periodCount++;
+		}
+	}
+	return (true);
+}
+
 Validate::Validate(void) {
 }

@@ -76,7 +76,7 @@ void	processInstruction(string str) {
 	Instruction *instruction = new Instruction(str);
 
 	if (instruction->isValid()) {
-		cout << "OK" << endl;
+		cout << instruction->getfloatValue() << endl;
 	}
 	else {
 		cout << "Instruction not valid" << endl;
