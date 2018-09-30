@@ -6,11 +6,19 @@ bool	isOperand(string ch) {
 	return (!ch.compare("+") || !ch.compare("-") || !ch.compare("*") || !ch.compare("/"));
 }
 
-char	*skipSpace(char *equation) {
-	while (*equation == ' ' && *equation) {
-			equation++;
+bool	Validate::foundOperator(string str) {
+	int index = -1;
+	
+	if (str.length() < 1) {
+		return (false);
 	}
-	return (equation);
+	while (++index < (int)str.length()) {
+		if (str[index] == '+' || str[index] == '-' || str[index] == '*' || str[index] == '/' ||
+            str[index] == '%') {
+			return (true);
+		}
+	}
+	return (false);
 }
 
 void	Validate::splitString(char *polyTemp) {
@@ -78,20 +86,6 @@ bool	mixedTerm(string term) {
 	return (isterm && (isOp || isequal));
 }
 
-bool	foundOperand(string str) {
-	int index = -1;
-	
-	if (str.length() < 1) {
-		return (false);
-	}
-	while (++index < (int)str.length()) {
-		if (str[index] == '+' || str[index] == '-' || str[index] == '*' || str[index] == '/') {
-			return (true);
-		}
-	}
-	return (false);
-}
-
 bool	foundNumber(string str) {
 	int index = -1;
 	
@@ -141,7 +135,7 @@ int	returnIndexOfNumber(string str) {
 }
 
 void	Validate::splitForAlphaAndDigit(string str) {
-	if (foundOperand(str) && foundEqualSign(str)) {
+	if (foundOperator(str) && foundEqualSign(str)) {
 		if (returnIndexOfOperand(str) < (int)str.find("=")) {
 			correctStrings.push_back(str.substr(0, returnIndexOfOperand(str)));
 			return splitMixedTerm(str.substr(returnIndexOfOperand(str)));
@@ -151,7 +145,7 @@ void	Validate::splitForAlphaAndDigit(string str) {
 			return splitMixedTerm(str.substr(str.find("=")));	
 		}
 	}
-	else if (foundOperand(str)) {
+	else if (foundOperator(str)) {
 		correctStrings.push_back(str.substr(0, returnIndexOfOperand(str)));
 		return splitMixedTerm(str.substr(returnIndexOfOperand(str)));
 	}
@@ -165,7 +159,7 @@ void	Validate::splitForAlphaAndDigit(string str) {
 }
 
 void	Validate::splitForEqualSign(string str) {
-	if (foundNumber(str) && foundOperand(str)) {
+	if (foundNumber(str) && foundOperator(str)) {
 		if (returnIndexOfNumber(str) < returnIndexOfOperand(str)) {
 			correctStrings.push_back(str.substr(0, returnIndexOfNumber(str)));
 			return (splitMixedTerm(str.substr(returnIndexOfNumber(str))));	
@@ -179,7 +173,7 @@ void	Validate::splitForEqualSign(string str) {
 		correctStrings.push_back(str.substr(0, returnIndexOfNumber(str)));
 		return (splitMixedTerm(str.substr(returnIndexOfNumber(str))));
 	}
-	else if (foundOperand(str)) {
+	else if (foundOperator(str)) {
 		correctStrings.push_back(str.substr(0, returnIndexOfOperand(str)));
 		return splitMixedTerm(str.substr(returnIndexOfOperand(str)));
 	}
@@ -314,6 +308,47 @@ bool	Validate::isPolynomialValid(char *poly, polynomial *equation) {
 	}
 	addexpression(equation);
 	return (true);
+}
+
+bool	Validate::isValidVariable(string str) {
+	int index = -1;
+	int	len = (int)str.length();
+
+	while (++index < len) {
+		if (!isalpha(str[index])) {
+			return (false);
+		}
+	}
+	return (true);
+}
+
+bool	Validate::isValidFunction(string str) {
+	size_t	index;
+	size_t	lastIndex;
+	string	variableTemp;
+	int		i = -1;
+
+	if (!isalpha(str[0])) {
+		return (false);
+	}
+	index = str.find("(");
+	if (index == string::npos) {
+		return (false);
+	}
+	while (++i < (int)index) {
+		if (!isalpha(str[i])) {
+			return (false);
+		}
+	}
+	lastIndex = str.find(")");
+	if (lastIndex == string::npos) {
+		return (false);
+	}
+	if (lastIndex - index == 1) {
+		return (false);
+	}
+	variableTemp = str.substr(index + 1, (lastIndex - index) - 1);
+	return (isValidVariable(variableTemp));
 }
 
 Validate::Validate(void) {

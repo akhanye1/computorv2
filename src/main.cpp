@@ -72,6 +72,17 @@ int		polynomialDegree(polynomial *equation) {
 	return (polDegree);
 }
 
+void	processInstruction(string str) {
+	Instruction *instruction = new Instruction(str);
+
+	if (instruction->isValid()) {
+		cout << "OK" << endl;
+	}
+	else {
+		cout << "Instruction not valid" << endl;
+	}
+}
+
 int		main(void) {
 	string	input;
 	bool	proceed = true;
@@ -82,7 +93,7 @@ int		main(void) {
 			proceed = false;
 		}
 		else {
-			cout << input << endl;
+			processInstruction(input);
 		}
 	}
 	return (0);

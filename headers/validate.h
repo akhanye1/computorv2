@@ -17,10 +17,13 @@ class	Validate {
         void            addexpression(polynomial *equation);
         static char     oneVar;
         bool            sameVariables(char *poly);
+        bool            foundOperator(string str);
 
 	public:
         Validate(void);
-		bool	isPolynomialValid(char *poly, polynomial *equation);
-        bool    isTermValid(char *term, polynomial *equation, int *termValid);  
+		bool	        isPolynomialValid(char *poly, polynomial *equation);
+        bool            isTermValid(char *term, polynomial *equation, int *termValid);
+        static bool     isValidVariable(string str);
+        static bool     isValidFunction(string str);
 };
 #endif

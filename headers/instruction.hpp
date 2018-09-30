@@ -9,13 +9,27 @@ enum    {VARIABLE, MATRIX, FUNCTION, IMAGINERY};
 
 class Instruction {
     private:
-        string      value;
-        int         instructionType;
+        vector<string>      commands;
+        vector<Instruction> instructions;
+        string              value;
+        int                 instructionType;
+        bool                valid;
+        string              command;
+        string              instruction;
+        void                splitString(string str, char deliminator, vector<string> &tempVector);
+        bool                verifyInstruction();
+
     public:
         Instruction();
-        string      getValue() const;
-        int         getType() const;
-        void        setInstruction(int instructionType);
+        Instruction(string str);
+        string              getValue() const;
+        int                 getType() const;
+        void                setInstruction(int instructionType);
+        bool                isValid() const;
+        bool                compareCommand(string command) const;
+        void                setCommand(string command);
+        string              getInstruction() const;
+        Instruction         findInstruction(string str);
 };
 
 #endif
