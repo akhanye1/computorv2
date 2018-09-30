@@ -37,5 +37,6 @@ class polynomial {
         void            multiplyVariables();
         void            debugOn();
         bool            isDebug();
+        void            calculate();
 };
 #endif

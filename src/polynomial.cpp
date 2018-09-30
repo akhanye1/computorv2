@@ -471,3 +471,7 @@ void    polynomial::multiplyVariables() {
     }
     showExpression("Multipliying variables with constants");
 }
+
+void    polynomial::calculate() {
+    bodmasRule(0);
+}

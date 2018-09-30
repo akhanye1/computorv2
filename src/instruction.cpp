@@ -52,11 +52,13 @@ bool    Instruction::checkRightHandSide(vector<string> rhs, bool isFunction, str
             polynomial *equation = new polynomial();
             Validate validator;
             if (!validator.isPolynomialValid(rhs_str, equation, *this)) {
-                cout << "Polinomial failed" << endl;
                 return (false);
             }
-            cout << "polynomial passed" << endl;
-            equation->showAll();
+            equation->calculate();
+            if (equation->counter == 1) {
+                tempInstruction = new Instruction();
+                tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
+            }
             return (true);
         }
     }
