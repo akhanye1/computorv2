@@ -33,12 +33,23 @@ bool    Instruction::checkOneValue(vector<string> rhs) {
         this->isPrint = true;
         return (true);
     }
-    else if (Validate::isValidVariable(rhs.at(0))) {
-        if (this->findInstruction(rhs.at(0)) != NULL) {
+    else if (Validate::isValidVariable(rhs.at(0), false)) {
+        polynomial *equation = new polynomial();
+        Validate validator;
+        if (!validator.isPolynomialValid(rhs.at(0), equation, *this)) {
+            return (false);
+        }
+        equation->calculate();
+        if (equation->counter == 1) {
             tempInstruction = new Instruction();
-            tempInstruction->setFloatValue(findInstruction(rhs.at(0))->getfloatValue());
+            tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
             return (true);
         }
+        // if (this->findInstruction(rhs.at(0)) != NULL) {
+        //     tempInstruction = new Instruction();
+        //     tempInstruction->setFloatValue(findInstruction(rhs.at(0))->getfloatValue());
+        //     return (true);
+        // }
     }
     return (false);
 }
@@ -106,10 +117,10 @@ bool    Instruction::verifyInstruction() {
     splitString(commands.at(1), ' ', rightInstructions);
     if (leftInstructions.size() == 1) {
         str = leftInstructions.at(0);
-        if (!Validate::isValidVariable(str) && !Validate::isValidFunction(str)) {
+        if (!Validate::isValidVariable(str, true) && !Validate::isValidFunction(str)) {
             return (false);
         }
-        if (Validate::isValidVariable(str)) {
+        if (Validate::isValidVariable(str, true)) {
             return (setVariableData(rightInstructions, str, commands.at(1)));
         }
     }

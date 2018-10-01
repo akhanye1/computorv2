@@ -70,6 +70,10 @@ void    term::fillTerm(string str) {
     string tempString;
 
     if (isdigit(str[0])) {
+        if (str.find("^") != string::npos) {
+            this->variable = str.substr(0, str.find("^"));
+            return (fillTerm(str.substr(str.find("^"))));
+        }
         this->constant = atof(str.c_str());
         this->isConstant = true;
         // if (alphaFound(str)) {
@@ -84,6 +88,11 @@ void    term::fillTerm(string str) {
         // }
     }
     else if (isalpha(str[0])) {
+        if (str.find("^") != string::npos) {
+            this->isVariable = true;
+            this->variable = str.substr(0, str.find("^"));
+            return (fillTerm(str.substr(str.find("^"))));
+        }
         this->variable = str;
         this->isVariable = true;
         // if (numberFound(str)) {
@@ -315,7 +324,6 @@ float   term::getCorrectValue() const {
 
 void    term::replaceVariable(float value) {
     this->isVariable = false;
-    this->isExponent = false;
     this->isConstant = true;
     this->constant = value;
 }

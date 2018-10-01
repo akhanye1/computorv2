@@ -28,7 +28,7 @@ class	Validate {
         Validate(void);
 		bool	        isPolynomialValid(string poly, polynomial *equation, Instruction instruction);
         bool            isTermValid(char *term, polynomial *equation, int *termValid);
-        static bool     isValidVariable(string str);
+        static bool     isValidVariable(string str, bool strict);
         static bool     isValidFunction(string str);
         static bool     isNumeric(string str);
 };

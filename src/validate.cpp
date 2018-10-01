@@ -22,8 +22,8 @@ bool	Validate::foundOperator(string str) {
 }
 
 void	Validate::splitString(string poly) {
-	string temp;
-	size_t pos;
+	string	temp;
+	size_t	pos;
 
 	while ((pos = poly.find(" ")) != string::npos) {
 		temp = poly.substr(0, pos);
@@ -33,6 +33,9 @@ void	Validate::splitString(string poly) {
 		}
 	}
 	if (temp.length() > 0) {
+		tempStrings.push_back(poly);
+	}
+	else if (poly.length() > 0) {
 		tempStrings.push_back(poly);
 	}
 }
@@ -282,6 +285,7 @@ void	Validate::splitMixedTerm(string str) {
 		return (splitForAlpha(str));
 	}
 	else if (isdigit(str[0])) {
+		return (splitForDigit(str));
 		// return (splitForDigit(str));
 	}
 	// else if (str[0] == '=') {
@@ -372,13 +376,23 @@ bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction 
 	return (checkVariables(equation, instructions));
 }
 
-bool	Validate::isValidVariable(string str) {
+bool	Validate::isValidVariable(string str, bool strict) {
 	int index = -1;
 	int	len = (int)str.length();
 
-	while (++index < len) {
-		if (!isalpha(str[index])) {
-			return (false);
+	if (strict) {
+		while (++index < len) {
+			if (!isalpha(str[index])) {
+				return (false);
+			}
+		}
+	}
+	else {
+		while (++index < len && isalpha(str[index]));
+		if (index < len) {
+			if (str[index] != '^') {
+				return (false);
+			}
 		}
 	}
 	return (true);
@@ -410,7 +424,7 @@ bool	Validate::isValidFunction(string str) {
 		return (false);
 	}
 	variableTemp = str.substr(index + 1, (lastIndex - index) - 1);
-	return (isValidVariable(variableTemp));
+	return (isValidVariable(variableTemp, true));
 }
 
 bool	Validate::isNumeric(string str) {
