@@ -310,6 +310,9 @@ void	Validate::correctSplit() {
 			correctStrings.push_back(tempStrings[index]);
 		}
 	}
+	for (size_t i = 0; i < correctStrings.size(); i++) {
+		cout << "Split String >> " << correctStrings[i] << endl;
+	}
 }
 
 void	Validate::addexpression(polynomial *equation) {
@@ -369,6 +372,7 @@ bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
 bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction instructions) {
 	splitString(poly);
 	correctSplit();
+
 	if (!checkPolynomialAuthentacity()) {
 		return (false);
 	}
@@ -432,6 +436,9 @@ bool	Validate::isNumeric(string str) {
 	int		len = (int)str.length();
 	int		periodCount = 0;
 
+	if ((str[0] == '-') || (str[0] == '+')) {
+		index = 0;
+	}
 	while (++index < len) {
 		if (!isdigit(str[index]) && str[index] != '.' && periodCount < 1) {
 			return (false);
