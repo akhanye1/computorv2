@@ -21,7 +21,7 @@ Instruction& Instruction::operator=(Instruction const &rhs) {
     return (*this);
 }
 
-bool    Instruction::setEquation(vector<string> rhs) {
+bool    Instruction::setEquation(vector<string> rhs, string rhs_string) {
     polynomial *equation = new polynomial();
     Validate validator;
 
@@ -31,14 +31,19 @@ bool    Instruction::setEquation(vector<string> rhs) {
     equation->calculate();
     if (equation->counter == 1) {
         tempInstruction = new Instruction();
-        tempInstruction->setInstruction(VARIABLE);
-        tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
+        tempInstruction->setInstruction(equation->getEquationType());
+        if (equation->getEquationType() == VARIABLE || equation->getEquationType() == FUNCTION) {
+            tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
+        }
+        else {
+            tempInstruction->setCommand(rhs_string);
+        }
         return (true);
     }
     return (false);
 }
 
-bool    Instruction::checkOneValue(vector<string> rhs) {
+bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
     Validate validator;
 
     if (!rhs.at(0).compare("i") || !rhs.at(0).compare("I")) {
@@ -60,11 +65,11 @@ bool    Instruction::checkOneValue(vector<string> rhs) {
     }
     else if (Validate::isValidVariable(rhs.at(0), false)) {
         cout << "Found variable" << endl;
-        return (this->setEquation(rhs));
+        return (this->setEquation(rhs, rhs_string));
     }
     else if (validator.foundOperator(rhs.at(0)) || validator.foundMixedTerm(rhs.at(0))) {
         cout << "Mixed term found : " << rhs.at(0) << endl;
-        return (this->setEquation(rhs));
+        return (this->setEquation(rhs, rhs_string));
     }
     cout << "Got here" << endl;
     return (false);
@@ -73,20 +78,10 @@ bool    Instruction::checkOneValue(vector<string> rhs) {
 bool    Instruction::checkRightHandSide(vector<string> rhs, bool isFunction, string rhs_str) {
     if (!isFunction) {
         if (rhs.size() == 1) {
-            return (this->checkOneValue(rhs));
+            return (this->checkOneValue(rhs, rhs_str));
         }
         else {
-            polynomial *equation = new polynomial();
-            Validate validator;
-            if (!validator.isPolynomialValid(rhs_str, equation, *this)) {
-                return (false);
-            }
-            equation->calculate();
-            if (equation->counter == 1) {
-                tempInstruction = new Instruction();
-                tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
-            }
-            return (true);
+            return (this->setEquation(rhs, rhs_str));
         }
     }
     return (false);
