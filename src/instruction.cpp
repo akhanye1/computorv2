@@ -21,8 +21,26 @@ Instruction& Instruction::operator=(Instruction const &rhs) {
     return (*this);
 }
 
+bool    Instruction::setEquation(vector<string> rhs) {
+    polynomial *equation = new polynomial();
+    Validate validator;
+
+    if (!validator.isPolynomialValid(rhs.at(0), equation, *this)) {
+        return (false);
+    }
+    equation->calculate();
+    if (equation->counter == 1) {
+        tempInstruction = new Instruction();
+        tempInstruction->setInstruction(VARIABLE);
+        tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
+        return (true);
+    }
+    return (false);
+}
+
 bool    Instruction::checkOneValue(vector<string> rhs) {
     Validate validator;
+
     if (!rhs.at(0).compare("i") || !rhs.at(0).compare("I")) {
         tempInstruction = new Instruction();
         tempInstruction->setInstruction(IMAGINERY);
@@ -41,37 +59,12 @@ bool    Instruction::checkOneValue(vector<string> rhs) {
         return (true);
     }
     else if (Validate::isValidVariable(rhs.at(0), false)) {
-        polynomial *equation = new polynomial();
-        if (!validator.isPolynomialValid(rhs.at(0), equation, *this)) {
-            return (false);
-        }
-        equation->calculate();
-        if (equation->counter == 1) {
-            tempInstruction = new Instruction();
-            tempInstruction->setInstruction(VARIABLE);
-            tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
-            return (true);
-        }
-        // if (this->findInstruction(rhs.at(0)) != NULL) {
-        //     tempInstruction = new Instruction();
-        //     tempInstruction->setFloatValue(findInstruction(rhs.at(0))->getfloatValue());
-        //     return (true);
-        // }
+        cout << "Found variable" << endl;
+        return (this->setEquation(rhs));
     }
     else if (validator.foundOperator(rhs.at(0)) || validator.foundMixedTerm(rhs.at(0))) {
-        cout << "Mixed term found" << endl;
-        polynomial *equation = new polynomial();
-        if (!validator.isPolynomialValid(rhs.at(0), equation, *this)) {
-            return (false);
-        }
-        equation->calculate();
-        if (equation->counter == 1) {
-            tempInstruction = new Instruction();
-            tempInstruction->setInstruction(VARIABLE);
-            tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
-            return (true);
-        }
-        return (false);
+        cout << "Mixed term found : " << rhs.at(0) << endl;
+        return (this->setEquation(rhs));
     }
     cout << "Got here" << endl;
     return (false);

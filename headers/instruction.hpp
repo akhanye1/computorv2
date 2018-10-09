@@ -5,8 +5,6 @@
 
 using namespace std;
 
-enum    {VARIABLE, MATRIX, FUNCTION, IMAGINERY};
-
 class Instruction {
     private:
         vector<string>      commands;
@@ -23,6 +21,7 @@ class Instruction {
         bool                checkRightHandSide(vector<string> rhs, bool isFunction, string rhs_string);
         bool                setVariableData(vector<string> instructions, string instr, string rhs);
         bool                checkOneValue(vector<string> rhs);
+        bool                setEquation(vector<string> rhs);
 
 
     public:

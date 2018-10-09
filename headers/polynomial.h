@@ -6,6 +6,8 @@
 
 using namespace std;
 
+enum    {VARIABLE, MATRIX, FUNCTION, IMAGINERY};
+
 class polynomial {
     private:
         vector<term>    terms;
@@ -16,6 +18,9 @@ class polynomial {
         float           getC();
         void            solveSquareRoot();
         static bool     debug;
+        int             equaitonType;
+        bool            isImaginary();
+
 
     public:
         polynomial(void);
@@ -38,5 +43,6 @@ class polynomial {
         void            debugOn();
         bool            isDebug();
         void            calculate();
+        int             getEquationType() const;
 };
 #endif

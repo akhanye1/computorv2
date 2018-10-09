@@ -77,10 +77,12 @@ void	processInstruction(string str) {
 
 	if (instruction->isValid()) {
 		switch (instruction->getType()) {
-			case VARIABLE: 
+			case VARIABLE:
+					cout << "VARIABLE" << endl;
 					cout << instruction->getfloatValue() << endl;
 				break;
 			case IMAGINERY:
+					cout << "IMAGINARY" << endl;
 					cout << instruction->getCommand() << endl;
 				break;
 		}

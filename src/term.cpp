@@ -71,21 +71,13 @@ void    term::fillTerm(string str) {
 
     if (isdigit(str[0])) {
         if (str.find("^") != string::npos) {
-            this->variable = str.substr(0, str.find("^"));
+            tempString = str.substr(0, str.find("^"));
+            this->constant = atof(tempString.c_str());
+            this->isConstant = true;
             return (fillTerm(str.substr(str.find("^"))));
         }
         this->constant = atof(str.c_str());
         this->isConstant = true;
-        // if (alphaFound(str)) {
-        //     tempString = str.substr(0, returnAlphaIndex(str));
-        //     this->constant = atof(tempString.c_str());
-        //     this->isConstant = true;
-        //     return (fillTerm(str.substr(returnAlphaIndex(str))));
-        // }
-        // else {
-        //     this->constant = atof(str.c_str());
-        //     this->isConstant = true;
-        // }
     }
     else if (isalpha(str[0])) {
         if (str.find("^") != string::npos) {
@@ -95,15 +87,6 @@ void    term::fillTerm(string str) {
         }
         this->variable = str;
         this->isVariable = true;
-        // if (numberFound(str)) {
-        //     this->variable = str[0];
-        //     this->isVariable = true;
-        //     return (fillTerm(str.substr(1)));
-        // }
-        // else {
-        //     this->variable = str[0];
-        //     this->isVariable = true;
-        // }
     }
     else if (str[0] == '^') {
         if (str[1]) {
@@ -112,14 +95,6 @@ void    term::fillTerm(string str) {
             this->isExponent = true;
         }
     }
-    // if (!this->isConstant) {
-    //     this->constant = 1;
-    //     this->isConstant = true;
-    // }
-    // if (this->isVariable && !this->isExponent) {
-    //     this->isExponent = true;
-    //     this->exponent = 1;
-    // }
 }
 
 term::term(string str, char operand, int termSide) {

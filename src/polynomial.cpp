@@ -472,6 +472,25 @@ void    polynomial::multiplyVariables() {
     showExpression("Multipliying variables with constants");
 }
 
+bool    polynomial::isImaginary() {
+    for (int i = 0; i < counter; i++) {
+        if (this->terms.at(i).isVar() && (!this->terms.at(i).getVariable().compare("i") ||
+            !this->terms.at(i).getVariable().compare("I"))) {
+                this->equaitonType = IMAGINERY;
+                return (true);
+            }
+    }
+    return (false);
+}
+
 void    polynomial::calculate() {
+    if (this->isImaginary()) {
+        return ;
+    }
     bodmasRule(0);
+}
+
+
+int     polynomial::getEquationType() const {
+    return this->equaitonType;
 }

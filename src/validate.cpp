@@ -67,11 +67,11 @@ bool	mixedTerm(string term) {
 	}
 	isConst = isVar = isOp = isequal = false;
 	while (++i < (int)term.length()) {
-		if (isalpha(term[i]) || isdigit(term[i]) || term[i] == '^') {
+		if (isalpha(term[i])) {
 			isConst = true;
 		}
 		if (isdigit(term[i])) {
-			isVar = true;
+			isConst = true;
 		}
 		if (term[i] == '+' || term[i] == '-' || term[i] == '*' || term[i] == '/') {
 			isOp = true;
@@ -266,9 +266,6 @@ void	Validate::correctSplit() {
 			correctStrings.push_back(tempStrings[index]);
 		}
 	}
-	for (size_t i = 0; i < correctStrings.size(); i++) {
-		cout << "Split String >> " << correctStrings[i] << endl;
-	}
 }
 
 void	Validate::addexpression(polynomial *equation) {
@@ -328,12 +325,6 @@ bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
 bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction instructions) {
 	splitString(poly);
 	correctSplit();
-	for (size_t i = 0; i < correctStrings.size(); i++) {
-		cout << correctStrings.at(i) << endl;
-	}
-	if (!checkPolynomialAuthentacity()) {
-		return (false);
-	}
 	addexpression(equation);
 	return (checkVariables(equation, instructions));
 }
