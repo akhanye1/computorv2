@@ -76,7 +76,14 @@ void	processInstruction(string str) {
 	Instruction *instruction = new Instruction(str);
 
 	if (instruction->isValid()) {
-		cout << instruction->getfloatValue() << endl;
+		switch (instruction->getType()) {
+			case VARIABLE: 
+					cout << instruction->getfloatValue() << endl;
+				break;
+			case IMAGINERY:
+					cout << instruction->getCommand() << endl;
+				break;
+		}
 	}
 	else {
 		cout << "Instruction not valid" << endl;

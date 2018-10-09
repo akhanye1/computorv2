@@ -22,7 +22,14 @@ Instruction& Instruction::operator=(Instruction const &rhs) {
 }
 
 bool    Instruction::checkOneValue(vector<string> rhs) {
-    if (Validate::isNumeric(rhs.at(0))) {
+    Validate validator;
+    if (!rhs.at(0).compare("i") || !rhs.at(0).compare("I")) {
+        tempInstruction = new Instruction();
+        tempInstruction->setInstruction(IMAGINERY);
+        tempInstruction->setCommand("i");
+        return (true);
+    }
+    else if (Validate::isNumeric(rhs.at(0))) {
         tempInstruction = new Instruction();
         tempInstruction->setInstruction(VARIABLE);
         tempInstruction->setFloatValue(atof(rhs.at(0).c_str()));
@@ -35,13 +42,13 @@ bool    Instruction::checkOneValue(vector<string> rhs) {
     }
     else if (Validate::isValidVariable(rhs.at(0), false)) {
         polynomial *equation = new polynomial();
-        Validate validator;
         if (!validator.isPolynomialValid(rhs.at(0), equation, *this)) {
             return (false);
         }
         equation->calculate();
         if (equation->counter == 1) {
             tempInstruction = new Instruction();
+            tempInstruction->setInstruction(VARIABLE);
             tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
             return (true);
         }
@@ -51,6 +58,22 @@ bool    Instruction::checkOneValue(vector<string> rhs) {
         //     return (true);
         // }
     }
+    else if (validator.foundOperator(rhs.at(0)) || validator.foundMixedTerm(rhs.at(0))) {
+        cout << "Mixed term found" << endl;
+        polynomial *equation = new polynomial();
+        if (!validator.isPolynomialValid(rhs.at(0), equation, *this)) {
+            return (false);
+        }
+        equation->calculate();
+        if (equation->counter == 1) {
+            tempInstruction = new Instruction();
+            tempInstruction->setInstruction(VARIABLE);
+            tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
+            return (true);
+        }
+        return (false);
+    }
+    cout << "Got here" << endl;
     return (false);
 }
 
@@ -232,4 +255,8 @@ void        Instruction::showAllInstructions() {
 
 void        Instruction::setInstructionHead(string head) {
     this->instruction = head;
+}
+
+void        Instruction::setCommand(string commandType) {
+    this->command = commandType;
 }

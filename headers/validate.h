@@ -21,7 +21,6 @@ class	Validate {
         void            addexpression(polynomial *equation);
         static char     oneVar;
         bool            sameVariables(char *poly);
-        bool            foundOperator(string str);
         bool            checkVariables(polynomial *equation, Instruction instruction);
 
 	public:
@@ -31,5 +30,7 @@ class	Validate {
         static bool     isValidVariable(string str, bool strict);
         static bool     isValidFunction(string str);
         static bool     isNumeric(string str);
+        bool            foundOperator(string str);
+        bool            foundMixedTerm(string str);
 };
 #endif

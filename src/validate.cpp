@@ -54,27 +54,24 @@ bool	Validate::checkPolynomialAuthentacity() {
 			return (false);
 		if (isOperand(correctStrings[index]) && isOperand(correctStrings[index + 1]))
 			return (false);
-		// if (!isOperand(correctStrings[index]) && !isOperand(correctStrings[index + 1])) {
-		// 	if (correctStrings[index].compare("=") && correctStrings[index + 1].compare("=")) {
-		// 		cout << "failed here (" << correctStrings[index] << ") (" << correctStrings[index + 1] << ")" << endl;
-		// 		return (false);
-		// 	}
-		// }
 	}
 	return (true);
 }
 
 bool	mixedTerm(string term) {
 	int i = -1;
-	bool isterm, isOp, isequal;
+	bool isConst, isVar, isOp, isequal;
 
 	if (term.length() < 1) {
 		return (false);
 	}
-	isterm = isOp = isequal = false;
+	isConst = isVar = isOp = isequal = false;
 	while (++i < (int)term.length()) {
 		if (isalpha(term[i]) || isdigit(term[i]) || term[i] == '^') {
-			isterm = true;
+			isConst = true;
+		}
+		if (isdigit(term[i])) {
+			isVar = true;
 		}
 		if (term[i] == '+' || term[i] == '-' || term[i] == '*' || term[i] == '/') {
 			isOp = true;
@@ -83,7 +80,10 @@ bool	mixedTerm(string term) {
 			isequal = true;
 		}
 	}
-	return (isterm && (isOp || isequal));
+	if (isConst && isVar) {
+		return (true);
+	}
+	return ((isConst || isVar) && (isOp || isequal));
 }
 
 bool	foundNumber(string str) {
@@ -177,6 +177,7 @@ void	Validate::splitForAlpha(string str) {
 	}
 	else if (foundNumber(str)) {
 		correctStrings.push_back(str.substr(0, returnIndexOfNumber(str)));
+		correctStrings.push_back("*");
 		return (splitMixedTerm(str.substr(returnIndexOfNumber(str))));
 	}
 	if (str.length() > 0) {
@@ -201,6 +202,7 @@ void	Validate::splitForDigit(string str) {
 	}
 	else if (foundAlpha(str)) {
 		correctStrings.push_back(str.substr(0, returnIndexOfAlpha(str)));
+		correctStrings.push_back("*");
 		return (splitMixedTerm(str.substr(returnIndexOfAlpha(str))));
 	}
 	if (str.length() > 0) {
@@ -208,72 +210,10 @@ void	Validate::splitForDigit(string str) {
 	}
 }
 
-// void	Validate::splitForAlphaAndDigit(string str) {
-// 	if (foundOperator(str) && foundEqualSign(str)) {
-// 		if (returnIndexOfOperand(str) < (int)str.find("=")) {
-// 			correctStrings.push_back(str.substr(0, returnIndexOfOperand(str)));
-// 			return splitMixedTerm(str.substr(returnIndexOfOperand(str)));
-// 		}
-// 		else {
-// 			correctStrings.push_back(str.substr(0, str.find("=")));
-// 			return splitMixedTerm(str.substr(str.find("=")));	
-// 		}
-// 	}
-// 	else if (foundOperator(str)) {
-// 		correctStrings.push_back(str.substr(0, returnIndexOfOperand(str)));
-// 		return splitMixedTerm(str.substr(returnIndexOfOperand(str)));
-// 	}
-// 	else if (foundEqualSign(str)) {
-// 		correctStrings.push_back(str.substr(0, str.find("=")));
-// 		return splitMixedTerm(str.substr(str.find("=")));
-// 	}
-// 	if (str.length() > 0) {
-// 		correctStrings.push_back(str);
-// 	}
-// }
-
-// void	Validate::splitForEqualSign(string str) {
-// 	if (foundNumber(str) && foundOperator(str)) {
-// 		if (returnIndexOfNumber(str) < returnIndexOfOperand(str)) {
-// 			correctStrings.push_back(str.substr(0, returnIndexOfNumber(str)));
-// 			return (splitMixedTerm(str.substr(returnIndexOfNumber(str))));	
-// 		}
-// 		else {
-// 			correctStrings.push_back(str.substr(0, returnIndexOfOperand(str)));
-// 			return splitMixedTerm(str.substr(returnIndexOfOperand(str)));	
-// 		}
-// 	}
-// 	else if (foundNumber(str)) {
-// 		correctStrings.push_back(str.substr(0, returnIndexOfNumber(str)));
-// 		return (splitMixedTerm(str.substr(returnIndexOfNumber(str))));
-// 	}
-// 	else if (foundOperator(str)) {
-// 		correctStrings.push_back(str.substr(0, returnIndexOfOperand(str)));
-// 		return splitMixedTerm(str.substr(returnIndexOfOperand(str)));
-// 	}
-// 	if (str.length() > 0) {
-// 		correctStrings.push_back(str);
-// 	}
-// }
-
 void	Validate::splitForOperand(string str) {
-	if (foundNumber(str) && foundEqualSign(str)) {
-		if (returnIndexOfNumber(str) < (int)str.find("=")) {
-			correctStrings.push_back(str.substr(0, returnIndexOfNumber(str)));
-			return (splitMixedTerm(str.substr(returnIndexOfNumber(str))));
-		}
-		else {
-			correctStrings.push_back(str.substr(0, str.find("=")));
-			return splitMixedTerm(str.substr(str.find("=")));
-		}
-	}
-	else if (foundNumber(str)) {
-		correctStrings.push_back(str.substr(0, returnIndexOfNumber(str)));
-		return (splitMixedTerm(str.substr(returnIndexOfNumber(str))));
-	}
-	else if (foundEqualSign(str)) {
-		correctStrings.push_back(str.substr(0, str.find("=")));
-		return splitMixedTerm(str.substr(str.find("=")));
+	if (str[1]) {
+		correctStrings.push_back(str.substr(0, 1));
+		return (splitMixedTerm(str.substr(1)));
 	}
 	if (str.length() > 0) {
 		correctStrings.push_back(str);
@@ -281,22 +221,38 @@ void	Validate::splitForOperand(string str) {
 }
 
 void	Validate::splitMixedTerm(string str) {
-	if (isalpha(str[0]) || isdigit(str[0])) {
+	if (isalpha(str[0])) {
 		return (splitForAlpha(str));
 	}
 	else if (isdigit(str[0])) {
 		return (splitForDigit(str));
-		// return (splitForDigit(str));
 	}
-	// else if (str[0] == '=') {
-	// 	return (splitForEqualSign(str));
-	// }
 	else if (str[0] == '+' || str[0] == '-' || str[0] == '*' || str[0] == '/') {
 		return (splitForOperand(str));
 	}
 	if (str.length() > 0) {
 		correctStrings.push_back(str);
 	}
+}
+
+bool	Validate::foundMixedTerm(string str) {
+	int 	numCount, alphaCount;
+	size_t	maxLength;
+
+	numCount = alphaCount = 0;
+	maxLength = str.length();
+	if (str.find("^") != string::npos) {
+		return (true);
+	}
+	for (size_t i = 0; i < maxLength; i++) {
+		if (isalpha(str[i])) {
+			alphaCount++;
+		}
+		else if (isdigit(str[i])) {
+			numCount++;
+		}
+	}
+	return (numCount > 0 && alphaCount > 0);
 }
 
 void	Validate::correctSplit() {
@@ -372,7 +328,9 @@ bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
 bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction instructions) {
 	splitString(poly);
 	correctSplit();
-
+	for (size_t i = 0; i < correctStrings.size(); i++) {
+		cout << correctStrings.at(i) << endl;
+	}
 	if (!checkPolynomialAuthentacity()) {
 		return (false);
 	}
