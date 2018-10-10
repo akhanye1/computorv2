@@ -488,6 +488,7 @@ void    polynomial::calculate() {
         return ;
     }
     bodmasRule(0);
+    this->equaitonType = VARIABLE;
 }
 
 

@@ -21,22 +21,27 @@ Instruction& Instruction::operator=(Instruction const &rhs) {
     return (*this);
 }
 
-bool    Instruction::setEquation(vector<string> rhs, string rhs_string) {
+bool    Instruction::setEquation(string rhs_string) {
     polynomial *equation = new polynomial();
     Validate validator;
 
-    if (!validator.isPolynomialValid(rhs.at(0), equation, *this)) {
+    if (!validator.isPolynomialValid(rhs_string, equation, *this)) {
         return (false);
     }
+    equation->showAll();
     equation->calculate();
+    equation->showAll();
+    cout << "Counter : " << equation->counter << endl;
     if (equation->counter == 1) {
         tempInstruction = new Instruction();
         tempInstruction->setInstruction(equation->getEquationType());
         if (equation->getEquationType() == VARIABLE || equation->getEquationType() == FUNCTION) {
             tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
+            cout << "first if statement" << endl;
         }
         else {
             tempInstruction->setCommand(rhs_string);
+            cout << "second if statement" << endl;
         }
         return (true);
     }
@@ -65,11 +70,11 @@ bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
     }
     else if (Validate::isValidVariable(rhs.at(0), false)) {
         cout << "Found variable" << endl;
-        return (this->setEquation(rhs, rhs_string));
+        return (this->setEquation(rhs_string));
     }
     else if (validator.foundOperator(rhs.at(0)) || validator.foundMixedTerm(rhs.at(0))) {
         cout << "Mixed term found : " << rhs.at(0) << endl;
-        return (this->setEquation(rhs, rhs_string));
+        return (this->setEquation(rhs_string));
     }
     cout << "Got here" << endl;
     return (false);
@@ -81,7 +86,7 @@ bool    Instruction::checkRightHandSide(vector<string> rhs, bool isFunction, str
             return (this->checkOneValue(rhs, rhs_str));
         }
         else {
-            return (this->setEquation(rhs, rhs_str));
+            return (this->setEquation(rhs_str));
         }
     }
     return (false);

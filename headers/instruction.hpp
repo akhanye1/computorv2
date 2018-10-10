@@ -21,7 +21,7 @@ class Instruction {
         bool                checkRightHandSide(vector<string> rhs, bool isFunction, string rhs_string);
         bool                setVariableData(vector<string> instructions, string instr, string rhs);
         bool                checkOneValue(vector<string> rhs, string rhs_string);
-        bool                setEquation(vector<string> rhs, string rhs_string);
+        bool                setEquation(string rhs_string);
 
 
     public:

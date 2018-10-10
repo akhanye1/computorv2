@@ -323,8 +323,12 @@ bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
 }
 
 bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction instructions) {
+	cout << "String received :: " << poly << endl; 
 	splitString(poly);
 	correctSplit();
+	for (size_t i = 0; i < correctStrings.size(); i++) {
+		cout << "String :: " << correctStrings.at(i) << endl;
+	}
 	addexpression(equation);
 	return (checkVariables(equation, instructions));
 }
