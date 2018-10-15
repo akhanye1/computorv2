@@ -3,6 +3,7 @@
 #include <vector>
 #include "term.h"
 #include <unistd.h>
+#include <sstream>
 
 using namespace std;
 
@@ -19,8 +20,6 @@ class polynomial {
         void            solveSquareRoot();
         static bool     debug;
         int             equaitonType;
-        bool            isImaginary();
-
 
     public:
         polynomial(void);
@@ -44,5 +43,7 @@ class polynomial {
         bool            isDebug();
         void            calculate();
         int             getEquationType() const;
+        bool            isImaginary();
+        string          toEquation();
 };
 #endif

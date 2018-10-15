@@ -26,23 +26,30 @@ bool    Instruction::setEquation(string rhs_string) {
     Validate validator;
 
     if (!validator.isPolynomialValid(rhs_string, equation, *this)) {
+        cout << "Is not valid polynomial" << endl;
         return (false);
     }
-    equation->showAll();
+    // equation->showAll();
     equation->calculate();
-    equation->showAll();
-    cout << "Counter : " << equation->counter << endl;
+    // equation->showAll();
+    // cout << "Counter : " << equation->counter << endl;
     if (equation->counter == 1) {
         tempInstruction = new Instruction();
         tempInstruction->setInstruction(equation->getEquationType());
         if (equation->getEquationType() == VARIABLE || equation->getEquationType() == FUNCTION) {
             tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
-            cout << "first if statement" << endl;
+            // cout << "first if statement" << endl;
         }
         else {
             tempInstruction->setCommand(rhs_string);
-            cout << "second if statement" << endl;
+            // cout << "second if statement" << endl;
         }
+        return (true);
+    }
+    else if (equation->isImaginary() && equation->counter > 0) {
+        tempInstruction = new Instruction();
+        tempInstruction->setCommand(equation->toEquation());
+        tempInstruction->setInstruction(IMAGINERY);
         return (true);
     }
     return (false);
@@ -69,14 +76,14 @@ bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
         return (true);
     }
     else if (Validate::isValidVariable(rhs.at(0), false)) {
-        cout << "Found variable" << endl;
+        // cout << "Found variable" << endl;
         return (this->setEquation(rhs_string));
     }
     else if (validator.foundOperator(rhs.at(0)) || validator.foundMixedTerm(rhs.at(0))) {
-        cout << "Mixed term found : " << rhs.at(0) << endl;
+        // cout << "Mixed term found : " << rhs.at(0) << endl;
         return (this->setEquation(rhs_string));
     }
-    cout << "Got here" << endl;
+    // cout << "Got here" << endl;
     return (false);
 }
 

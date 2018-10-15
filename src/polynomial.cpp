@@ -109,6 +109,7 @@ void    polynomial::solveExponents(int start) {
     while (start < counter) {
         if (this->terms.at(start).getConstant() == 0 && this->terms.at(start).isVar()) {
             this->terms.erase(this->terms.begin() + start);
+            cout << "Removed term" << endl;
             counter--;
             return (solveExponents(start));
         }
@@ -484,14 +485,40 @@ bool    polynomial::isImaginary() {
 }
 
 void    polynomial::calculate() {
-    if (this->isImaginary()) {
-        return ;
-    }
+    bool isImaginery = this->isImaginary();
     bodmasRule(0);
-    this->equaitonType = VARIABLE;
+    // cout << "After bodmas rule" << endl;
+    // showAll();
+    if (!isImaginery) {
+        this->equaitonType = VARIABLE;
+    }
 }
 
 
 int     polynomial::getEquationType() const {
     return this->equaitonType;
+}
+
+string  polynomial::toEquation() {
+    stringstream    ss;
+    string          tempString;
+
+    for (int i = 0; i < counter; i++) {
+        if (i > 0) {
+            ss << this->terms.at(i).getOperand() << " ";
+        }
+        else if (i == 0 && this->terms.at(i).getOperand() != '+') {
+            ss << this->terms.at(i).getOperand() << " ";
+        }
+        ss << this->terms.at(i).getConstant();
+        if (this->terms.at(i).isVar()) {
+            ss << this->terms.at(i).getVariable();
+        }
+        if (this->terms.at(i).isExp()) {
+            ss << "^" << this->terms.at(i).getExponent();
+        }
+        ss << " ";
+    }
+    tempString = ss.str();
+    return (tempString);
 }

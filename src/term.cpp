@@ -95,6 +95,10 @@ void    term::fillTerm(string str) {
             this->isExponent = true;
         }
     }
+    if (this->isVariable && !this->isConstant) {
+        this->isConstant = true;
+        this->constant = 1;
+    }
 }
 
 term::term(string str, char operand, int termSide) {
