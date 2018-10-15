@@ -55,6 +55,19 @@ bool    Instruction::setEquation(string rhs_string) {
     return (false);
 }
 
+bool    Instruction::setupMatrix(string rhs_string) {
+    Matrix *matrix = new Matrix(rhs_string, *this);
+
+    if (matrix->matrixOk()) {
+        cout << "matrix valid" << endl;
+        this->matrix = matrix;
+        this->instructionType = MATRIX;
+        return (true);
+    }
+    cout << "matrix failed" << endl;
+    return (false);
+}
+
 bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
     Validate validator;
 
@@ -84,8 +97,7 @@ bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
         return (this->setEquation(rhs_string));
     }
     else if (Matrix::isValidMatrix(rhs_string)) {
-        cout << "Is valid matrix expression" << endl;
-        return (true);
+        return (setupMatrix(rhs_string));
     }
     cout << "Got here" << endl;
     return (false);
@@ -108,14 +120,22 @@ bool    Instruction::setVariableData(vector<string> rightInstructions, string st
     if (!this->checkRightHandSide(rightInstructions, false, rhs)) {
         return (false);
     }
+    if (this->getType() == MATRIX) {
+        this->instruction = str;
+        this->instructions.push_back(*this);
+        return (true);
+    }
     if (tempInstruction == NULL) {
         return (false);
     }
     if (this->isPrint) {
+        cout << "Finding instruction" << endl;
         if (findInstruction(str) == NULL) {
+            cout << "Instruction not found" << endl;
             return (false);
         }
         else {
+            cout << "Instruction found" << endl;
             this->setInstructionData(*findInstruction(str));
             this->isPrint = true;
         }
@@ -165,21 +185,11 @@ void    Instruction::setInstructionData(Instruction data) {
     this->instructionType = data.getType();
     this->instruction = data.getInstruction();
     this->command = data.getCommand();
+    this->matrix = data.getMatrix();
 }
 
 string  Instruction::getCommand() const {
     return (this->command);
-}
-
-string  trimString(string str) {
-    string  temp = str;
-    int     startPos = -1;
-    int     endPos = str.length();
-
-    while (str[++startPos] && str[startPos] == ' ');
-    while (--endPos > 0 && str[endPos] == ' ');
-    temp = temp.substr(startPos, (endPos - startPos) + 1);
-    return (temp);
 }
 
 void	Instruction::splitString(string poly, char deliminator, vector<string> &tempVector) {
@@ -187,12 +197,12 @@ void	Instruction::splitString(string poly, char deliminator, vector<string> &tem
 	size_t  pos;
 
 	while ((pos = poly.find(deliminator)) != string::npos) {
-        temp = trimString(poly.substr(0, pos));
+        temp = Validate::trimString(poly.substr(0, pos));
 		poly = poly.substr(pos + 1);
         if (temp.length() > 0)
 		    tempVector.push_back(temp);
 	}
-	tempVector.push_back(trimString(poly));
+	tempVector.push_back(Validate::trimString(poly));
 }
 
 string      Instruction::getValue() const {
@@ -263,4 +273,8 @@ void        Instruction::setInstructionHead(string head) {
 
 void        Instruction::setCommand(string commandType) {
     this->command = commandType;
+}
+
+Matrix      *Instruction::getMatrix() {
+    return (this->matrix);
 }

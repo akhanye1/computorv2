@@ -33,5 +33,6 @@ class	Validate {
         bool            foundOperator(string str);
         bool            foundMixedTerm(string str);
         static bool     bracketsOk(string str);
+        static string   trimString(string str);
 };
 #endif

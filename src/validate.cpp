@@ -446,3 +446,14 @@ bool	Validate::bracketsOk(string str) {
 	}
 	return (compareClose.size() == 0);
 }
+
+string  Validate::trimString(string str) {
+    string  temp = str;
+    int     startPos = -1;
+    int     endPos = str.length();
+
+    while (str[++startPos] && str[startPos] == ' ');
+    while (--endPos > 0 && str[endPos] == ' ');
+    temp = temp.substr(startPos, (endPos - startPos) + 1);
+    return (temp);
+}

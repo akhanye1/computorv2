@@ -85,6 +85,10 @@ void	processInstruction(string str) {
 					cout << "IMAGINARY" << endl;
 					cout << instruction->getCommand() << endl;
 				break;
+			case MATRIX:
+					cout << "MATRICES" << endl;
+					cout << instruction->getMatrix()->toString() << endl;
+				break;
 		}
 	}
 	else {
