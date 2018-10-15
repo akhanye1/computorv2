@@ -32,5 +32,6 @@ class	Validate {
         static bool     isNumeric(string str);
         bool            foundOperator(string str);
         bool            foundMixedTerm(string str);
+        static bool     bracketsOk(string str);
 };
 #endif

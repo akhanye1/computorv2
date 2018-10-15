@@ -83,7 +83,11 @@ bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
         // cout << "Mixed term found : " << rhs.at(0) << endl;
         return (this->setEquation(rhs_string));
     }
-    // cout << "Got here" << endl;
+    else if (Matrix::isValidMatrix(rhs_string)) {
+        cout << "Is valid matrix expression" << endl;
+        return (true);
+    }
+    cout << "Got here" << endl;
     return (false);
 }
 

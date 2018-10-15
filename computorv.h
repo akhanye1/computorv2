@@ -10,6 +10,7 @@
 #include "headers/term.h"
 #include "headers/validate.h"
 #include "headers/instruction.hpp"
+#include "headers/matrix.hpp"
 
 using namespace std;
 

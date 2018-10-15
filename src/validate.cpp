@@ -422,3 +422,27 @@ bool	Validate::isNumeric(string str) {
 
 Validate::Validate(void) {
 }
+
+bool	Validate::bracketsOk(string str) {
+	vector<char> compareClose;
+	int i;
+	int len;
+
+	i = -1;
+	len = (int)str.length();
+	while (++i < len) {
+		if (str[i] == '[') {
+			compareClose.push_back(']');
+		}
+		else if (str[i] == '(') {
+			compareClose.push_back(')');
+		}
+		else if (str[i] == ']' || str[i] == ')') {
+			if (compareClose.at(compareClose.size() - 1) != str[i]) {
+				return (false);
+			}
+			compareClose.erase(compareClose.end() - 1);
+		}
+	}
+	return (compareClose.size() == 0);
+}
