@@ -98,23 +98,21 @@ bool    Matrix::matrixOk() {
 string  Matrix::toString() {
     stringstream stream;
 
-    stream << "[";
     // cout << "Starting to string funciton" << endl;
     // cout << "Rows from vector <<" << this->values.size() << ">> compared to <<" << this->rows << ">>" << endl;
     for (size_t i = 0; i < this->rows; i++) {
         if (i != 0) {
-            stream << ";";
+            stream << "\n";
         }
-        stream << "[";
+        stream << "[ ";
         for (size_t x = 0; x < this->cols; x++) {
             if (x != 0) {
-                stream << ",";
+                stream << " , ";
             }
             stream << this->values[i][x];
         }
-        stream << "]";
+        stream << " ]";
     }
-    stream << "]";
     // cout << "Ending to string funciton" << endl;
     return (stream.str());
 }
