@@ -111,6 +111,15 @@ bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
     return (false);
 }
 
+bool    Instruction::checkOneFunctionValue(string rhs_string) {
+    if (rhs_string.compare("?")) {
+        tempInstruction = new Instruction();
+        this->isPrint = true;
+        return (true);
+    }
+    return (false);
+}
+
 bool    Instruction::checkRightHandSide(vector<string> rhs, bool isFunction, string rhs_str) {
     if (!isFunction) {
         if (rhs.size() == 1) {
@@ -118,7 +127,10 @@ bool    Instruction::checkRightHandSide(vector<string> rhs, bool isFunction, str
         }
         return (this->setEquation(rhs_str));
     }
-    return (false);
+    if (rhs.size() == 1) {
+        return (this->checkOneFunctionValue(rhs_str));
+    }
+    return (this->setEquation(rhs_str));
 }
 
 bool    Instruction::prepareForPrint(string str) {
@@ -130,7 +142,6 @@ bool    Instruction::prepareForPrint(string str) {
     cout << "Instruction found" << endl;
     *this = *findInstruction(str);
     this->setMatrix(findInstruction(str)->getMatrix());
-    // this->setInstructionData(*findInstruction(str));
     this->isPrint = true;
     return (true);
 }
@@ -149,30 +160,17 @@ bool    Instruction::setVariableData(vector<string> rightInstructions, string st
     tempInstruction->setInstructionHead(str);
     this->setInstructionData(*tempInstruction);
     return (true);
-    // if (this->getType() == MATRIX) {
-    //     this->instruction = str;
-    //     this->instructions.push_back(*this);
-    //     return (true);
-    // }
-    // if (tempInstruction == NULL) {
-    //     return (false);
-    // }
-    // if (this->isPrint) {
-    
-    //     return (true);
-    // }
-    // tempInstruction->setInstructionHead(str);
-    // if (this->findInstruction(str) == NULL) {
-    //     this->setInstructionData(*tempInstruction);
-    //     instructions.push_back(*this);
-    //     return (true);
-    // }
-    // else {
-    //     findInstruction(str)->setInstructionData(*tempInstruction);
-    //     this->setInstructionData(*tempInstruction);
-    //     return (true);
-    // }
-    // return (false);
+}
+
+bool    Instruction::setFunctionData(vector<string> rhs_array, string str, string rhs_string) {
+    tempInstruction = NULL;
+    if (str.compare("?")) {
+        
+    }
+    if (!this->checkRightHandSide(rhs_array, true, rhs_string)) {
+        return (false);
+    }
+    return (true);
 }
 
 bool    Instruction::verifyInstruction() {
@@ -190,6 +188,9 @@ bool    Instruction::verifyInstruction() {
         if (Validate::isValidVariable(str, true)) {
             return (setVariableData(rightInstructions, str, commands.at(1)));
         }
+        else if (Validate::isValidFunction(str)) {
+            return (setFunctionData(rightInstructions, str, commands.at(1)));
+        }
     }
     else if (rightInstructions.size() == 1) {
         if (rightInstructions.at(0).compare("?")) {
@@ -203,12 +204,6 @@ void    Instruction::setInstructionData(Instruction data) {
     Instruction *savedInstruction = findInstruction(data.getInstruction());
     if (savedInstruction != NULL) {
         *this = *savedInstruction;
-        // savedInstruction->setFloatValue(data.getfloatValue());
-        // savedInstruction->setInstruction(data.getType());
-        // savedInstruction->setInstructionHead(data.getInstruction());
-        // savedInstruction->setCommand(data.getCommand());
-        // savedInstruction->setMatrix(data.getMatrix());
-        // return ;
     }
     this->value = data.getValue();
     this->floatValue = data.getfloatValue();

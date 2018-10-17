@@ -21,11 +21,13 @@ class Instruction {
         bool                        verifyInstruction();
         bool                        checkRightHandSide(vector<string> rhs, bool isFunction, string rhs_string);
         bool                        setVariableData(vector<string> instructions, string instr, string rhs);
+        bool                        setFunctionData(vector<string> instructions, string instr, string rhs_str);
         bool                        checkOneValue(vector<string> rhs, string rhs_string);
         bool                        setEquation(string rhs_string);
         bool                        setupMatrix(string rhs_string);
         bool                        prepareForPrint(string str);
         int                         foundIndex;
+        bool                        checkOneFunctionValue(string rhs_string);
 
 
     public:

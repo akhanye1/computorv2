@@ -330,11 +330,9 @@ bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
 			}
 			if (!isImaginary) {
 				tempTerm = equation->getTerm(index);
-				tempTerm->replaceVariable(instructions.findInstruction(tempTerm->getVariable())->getfloatValue());	}
+				tempTerm->replaceVariable(instructions.findInstruction(tempTerm->getVariable())->getfloatValue());
 			}
-			// else {
-			// 	cout << "is imaginery" << endl;
-			// }
+		}
 	}
 	return (true);
 }
@@ -343,10 +341,11 @@ bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction 
 	// cout << "String received :: " << poly << endl; 
 	splitString(poly);
 	correctSplit();
-	// for (size_t i = 0; i < correctStrings.size(); i++) {
-	// 	cout << "String :: " << correctStrings.at(i) << endl;
-	// }
+	for (size_t i = 0; i < correctStrings.size(); i++) {
+		cout << "String :: " << correctStrings.at(i) << endl;
+	}
 	addexpression(equation);
+	equation->showAll();
 	return (checkVariables(equation, instructions));
 }
 
