@@ -9,6 +9,8 @@ class	Validate {
     private:
         void            splitString(string poly);
         void            correctSplit();
+        int             lastIndexOfAlpha(string str);
+        int             lastIndexOfFloat(string str);
         void            splitMixedTerm(string str);
         vector<string>  tempStrings;
         vector<string>  correctStrings;
@@ -17,7 +19,7 @@ class	Validate {
         void            splitForAlpha(string str);
         void            splitForDigit(string str);
         void            splitForEqualSign(string str);
-        void            splitForOperand(string str);
+        void            splitForOneChar(string str);
         void            addexpression(polynomial *equation);
         static char     oneVar;
         bool            sameVariables(char *poly);

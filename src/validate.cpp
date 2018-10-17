@@ -2,6 +2,10 @@
 
 char	Validate::oneVar = ' ';
 
+bool	isOperandCharector(string ch) {
+	return (ch[0] == '+' || ch[0] == '-' || ch[0] == '*' || ch[0] == '/');
+}
+
 bool	isOperand(string ch) {
 	return (!ch.compare("+") || !ch.compare("-") || !ch.compare("*") || !ch.compare("/"));
 }
@@ -60,12 +64,12 @@ bool	Validate::checkPolynomialAuthentacity() {
 
 bool	mixedTerm(string term) {
 	int i = -1;
-	bool isConst, isVar, isOp, isequal;
+	bool isConst, isVar, isOp, isequal, isBracket;
 
 	if (term.length() < 1) {
 		return (false);
 	}
-	isConst = isVar = isOp = isequal = false;
+	isConst = isVar = isOp = isequal = isBracket = false;
 	while (++i < (int)term.length()) {
 		if (isalpha(term[i])) {
 			isVar = true;
@@ -79,11 +83,14 @@ bool	mixedTerm(string term) {
 		if (term[i] == '=') {
 			isequal = true;
 		}
+		if (term[i] == '(' || term[i] == ')') {
+			isBracket = true;
+		}
 	}
 	if (isConst && isVar) {
 		return (true);
 	}
-	return ((isConst || isVar) && (isOp || isequal));
+	return ((isConst || isVar) && (isOp || isequal || isBracket));
 }
 
 bool	foundNumber(string str) {
@@ -160,58 +167,69 @@ int	returnIndexOfAlpha(string str) {
 	return (0);
 }
 
+int		Validate::lastIndexOfAlpha(string str) {
+	int	bracketsCount = 0;
+	int	i = -1;
+	int	len = (int)str.length();
+
+	while (++i < len) {
+		if (!isalpha(str[i])) {
+			if ((str[i] == '(' || str[i] == ')') && bracketsCount < 2) {
+				bracketsCount++;
+			}
+			else {
+				return (i);
+			}
+		}
+	}
+	return (-1);
+}
+
 void	Validate::splitForAlpha(string str) {
-	if (foundEqualSign(str) && foundNumber(str)) {
-		if (returnIndexOfOperand(str) < foundNumber(str)) {
-			correctStrings.push_back(str.substr(0, returnIndexOfOperand(str)));
-			return splitMixedTerm(str.substr(returnIndexOfOperand(str)));
+	if (this->lastIndexOfAlpha(str) > -1) {
+		correctStrings.push_back(str.substr(0, this->lastIndexOfAlpha(str)));
+		if (!isOperandCharector(str.substr(this->lastIndexOfAlpha(str)))) {
+			correctStrings.push_back("*");
 		}
-		else {
-			correctStrings.push_back(str.substr(0, returnIndexOfNumber(str)));
-			return (splitMixedTerm(str.substr(returnIndexOfNumber(str))));
-		}
-	}
-	else if (foundOperator(str)) {
-		correctStrings.push_back(str.substr(0, returnIndexOfOperand(str)));
-		return splitMixedTerm(str.substr(returnIndexOfOperand(str)));
-	}
-	else if (foundNumber(str)) {
-		correctStrings.push_back(str.substr(0, returnIndexOfNumber(str)));
-		correctStrings.push_back("*");
-		return (splitMixedTerm(str.substr(returnIndexOfNumber(str))));
+		return (splitMixedTerm(str.substr(this->lastIndexOfAlpha(str))));
 	}
 	if (str.length() > 0) {
 		correctStrings.push_back(str);
 	}
+}
+
+int		Validate::lastIndexOfFloat(string str) {
+	int	i = -1;
+	int	periodCounter = 0;
+	int len = (int)str.length();
+
+	while (++i < len) {
+		if (!isdigit(str[i])) {
+			if (str[i] == '.' && periodCounter < 1) {
+				periodCounter++;
+			}
+			else {
+				return (i);
+			}
+		}
+	}
+	return (-1);
 }
 
 void	Validate::splitForDigit(string str) {
-	// cout << "Split for digit " << str << endl;
-	if (foundEqualSign(str) && foundAlpha(str)) {
-		if (returnIndexOfOperand(str) < foundAlpha(str)) {
-			correctStrings.push_back(str.substr(0, returnIndexOfOperand(str)));
-			return splitMixedTerm(str.substr(returnIndexOfOperand(str)));
+	if (this->lastIndexOfFloat(str) > -1) {
+		correctStrings.push_back(str.substr(0, this->lastIndexOfFloat(str)));
+		if (!isOperandCharector(str.substr(this->lastIndexOfFloat(str)))) {
+			correctStrings.push_back("*");
 		}
-		else {
-			correctStrings.push_back(str.substr(0, returnIndexOfAlpha(str)));
-			return (splitMixedTerm(str.substr(returnIndexOfAlpha(str))));
-		}
-	}
-	else if (foundOperator(str)) {
-		correctStrings.push_back(str.substr(0, returnIndexOfOperand(str)));
-		return splitMixedTerm(str.substr(returnIndexOfOperand(str)));
-	}
-	else if (foundAlpha(str)) {
-		correctStrings.push_back(str.substr(0, returnIndexOfAlpha(str)));
-		correctStrings.push_back("*");
-		return (splitMixedTerm(str.substr(returnIndexOfAlpha(str))));
+		return (splitMixedTerm(str.substr(this->lastIndexOfFloat(str))));
 	}
 	if (str.length() > 0) {
 		correctStrings.push_back(str);
 	}
 }
 
-void	Validate::splitForOperand(string str) {
+void	Validate::splitForOneChar(string str) {
 	if (str[1]) {
 		correctStrings.push_back(str.substr(0, 1));
 		return (splitMixedTerm(str.substr(1)));
@@ -229,8 +247,9 @@ void	Validate::splitMixedTerm(string str) {
 	else if (isdigit(str[0])) {
 		return (splitForDigit(str));
 	}
-	else if (str[0] == '+' || str[0] == '-' || str[0] == '*' || str[0] == '/') {
-		return (splitForOperand(str));
+	else if (str[0] == '+' || str[0] == '-' || str[0] == '*'
+		|| str[0] == '/' || str[0] == '(' || str[0] == ')') {
+		return (splitForOneChar(str));
 	}
 	if (str.length() > 0) {
 		correctStrings.push_back(str);
@@ -339,6 +358,9 @@ bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
 
 bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction instructions) {
 	// cout << "String received :: " << poly << endl; 
+	if (!this->bracketsOk(poly)) {
+		return (false);
+	}
 	splitString(poly);
 	correctSplit();
 	for (size_t i = 0; i < correctStrings.size(); i++) {
