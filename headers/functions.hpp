@@ -9,6 +9,8 @@ class Functions {
         string      variable;
         string      simplified;
         float       placeHolder;
+    public:
+        Functions();  
 };
 
 #endif

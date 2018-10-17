@@ -11,6 +11,7 @@
 #include "headers/validate.h"
 #include "headers/instruction.hpp"
 #include "headers/matrix.hpp"
+#include "headers/functions.hpp"
 
 using namespace std;
 

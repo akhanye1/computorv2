@@ -24,6 +24,8 @@ class Instruction {
         bool                        checkOneValue(vector<string> rhs, string rhs_string);
         bool                        setEquation(string rhs_string);
         bool                        setupMatrix(string rhs_string);
+        bool                        prepareForPrint(string str);
+        int                         foundIndex;
 
 
     public:
@@ -48,6 +50,7 @@ class Instruction {
         void                        showAllInstructions();
         static void                 splitString(string str, char deliminator, vector<string> &tempVector);
         Matrix                      *getMatrix();
+        void                        setMatrix(Matrix *matrix);
 };
 
 #endif

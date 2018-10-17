@@ -4,9 +4,11 @@ vector<Instruction> Instruction::instructions;
 
 Instruction::Instruction() {
     this->valid = false;
+    this->matrix = NULL;
 }
 
 Instruction::Instruction(string str) {
+    this->matrix = NULL;
     this->splitString(str, '=', this->commands);
     this->isPrint = false;
     if (this->commands.size() != 2) {
@@ -17,7 +19,12 @@ Instruction::Instruction(string str) {
 }
 
 Instruction& Instruction::operator=(Instruction const &rhs) {
-    this->setInstructionData(rhs);
+    this->value = rhs.getValue();
+    this->floatValue = rhs.getfloatValue();
+    this->instructionType = rhs.getType();
+    this->instruction = rhs.getInstruction();
+    this->command = rhs.getCommand();
+    // this->matrix = rhs.getMatrix();
     return (*this);
 }
 
@@ -60,8 +67,9 @@ bool    Instruction::setupMatrix(string rhs_string) {
 
     if (matrix->matrixOk()) {
         cout << "matrix valid" << endl;
-        this->matrix = matrix;
-        this->instructionType = MATRIX;
+        tempInstruction = new Instruction();
+        tempInstruction->setMatrix(matrix);
+        tempInstruction->setInstruction(MATRIX);
         return (true);
     }
     cout << "matrix failed" << endl;
@@ -108,11 +116,23 @@ bool    Instruction::checkRightHandSide(vector<string> rhs, bool isFunction, str
         if (rhs.size() == 1) {
             return (this->checkOneValue(rhs, rhs_str));
         }
-        else {
-            return (this->setEquation(rhs_str));
-        }
+        return (this->setEquation(rhs_str));
     }
     return (false);
+}
+
+bool    Instruction::prepareForPrint(string str) {
+    cout << "Finding instruction" << endl;
+    if (findInstruction(str) == NULL) {
+        cout << "Instruction not found" << endl;
+        return (false);
+    }
+    cout << "Instruction found" << endl;
+    *this = *findInstruction(str);
+    this->setMatrix(findInstruction(str)->getMatrix());
+    // this->setInstructionData(*findInstruction(str));
+    this->isPrint = true;
+    return (true);
 }
 
 bool    Instruction::setVariableData(vector<string> rightInstructions, string str, string rhs) {
@@ -120,39 +140,39 @@ bool    Instruction::setVariableData(vector<string> rightInstructions, string st
     if (!this->checkRightHandSide(rightInstructions, false, rhs)) {
         return (false);
     }
-    if (this->getType() == MATRIX) {
-        this->instruction = str;
-        this->instructions.push_back(*this);
-        return (true);
-    }
     if (tempInstruction == NULL) {
         return (false);
     }
-    if (this->isPrint) {
-        cout << "Finding instruction" << endl;
-        if (findInstruction(str) == NULL) {
-            cout << "Instruction not found" << endl;
-            return (false);
-        }
-        else {
-            cout << "Instruction found" << endl;
-            this->setInstructionData(*findInstruction(str));
-            this->isPrint = true;
-        }
-        return (true);
+    else if (this->isPrint) {
+        return (prepareForPrint(str));
     }
     tempInstruction->setInstructionHead(str);
-    if (this->findInstruction(str) == NULL) {
-        this->setInstructionData(*tempInstruction);
-        instructions.push_back(*this);
-        return (true);
-    }
-    else {
-        findInstruction(str)->setInstructionData(*tempInstruction);
-        this->setInstructionData(*tempInstruction);
-        return (true);
-    }
-    return (false);
+    this->setInstructionData(*tempInstruction);
+    return (true);
+    // if (this->getType() == MATRIX) {
+    //     this->instruction = str;
+    //     this->instructions.push_back(*this);
+    //     return (true);
+    // }
+    // if (tempInstruction == NULL) {
+    //     return (false);
+    // }
+    // if (this->isPrint) {
+    
+    //     return (true);
+    // }
+    // tempInstruction->setInstructionHead(str);
+    // if (this->findInstruction(str) == NULL) {
+    //     this->setInstructionData(*tempInstruction);
+    //     instructions.push_back(*this);
+    //     return (true);
+    // }
+    // else {
+    //     findInstruction(str)->setInstructionData(*tempInstruction);
+    //     this->setInstructionData(*tempInstruction);
+    //     return (true);
+    // }
+    // return (false);
 }
 
 bool    Instruction::verifyInstruction() {
@@ -180,12 +200,26 @@ bool    Instruction::verifyInstruction() {
 }
 
 void    Instruction::setInstructionData(Instruction data) {
+    Instruction *savedInstruction = findInstruction(data.getInstruction());
+    if (savedInstruction != NULL) {
+        *this = *savedInstruction;
+        // savedInstruction->setFloatValue(data.getfloatValue());
+        // savedInstruction->setInstruction(data.getType());
+        // savedInstruction->setInstructionHead(data.getInstruction());
+        // savedInstruction->setCommand(data.getCommand());
+        // savedInstruction->setMatrix(data.getMatrix());
+        // return ;
+    }
     this->value = data.getValue();
-    this->floatValue= data.getfloatValue();
+    this->floatValue = data.getfloatValue();
     this->instructionType = data.getType();
     this->instruction = data.getInstruction();
     this->command = data.getCommand();
     this->matrix = data.getMatrix();
+    if (savedInstruction != NULL) {
+        instructions.erase(instructions.begin() + foundIndex);
+    }
+    instructions.push_back(*this);
 }
 
 string  Instruction::getCommand() const {
@@ -251,6 +285,7 @@ Instruction *Instruction::findInstruction(string str) {
 
     while (++index < len) {
         if (instructions.at(index).compareCommand(str)) {
+            foundIndex = index;
             return (&instructions.at(index));
         }
     }
@@ -277,4 +312,8 @@ void        Instruction::setCommand(string commandType) {
 
 Matrix      *Instruction::getMatrix() {
     return (this->matrix);
+}
+
+void        Instruction::setMatrix(Matrix *tempMatrix) {
+    this->matrix = tempMatrix;
 }
