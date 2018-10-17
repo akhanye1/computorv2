@@ -220,7 +220,9 @@ void	Validate::splitForDigit(string str) {
 	if (this->lastIndexOfFloat(str) > -1) {
 		correctStrings.push_back(str.substr(0, this->lastIndexOfFloat(str)));
 		if (!isOperandCharector(str.substr(this->lastIndexOfFloat(str)))) {
-			correctStrings.push_back("*");
+			if (str[this->lastIndexOfFloat(str)] != ')') {
+				correctStrings.push_back("*");
+			}
 		}
 		return (splitMixedTerm(str.substr(this->lastIndexOfFloat(str))));
 	}
@@ -296,7 +298,7 @@ void	Validate::addexpression(polynomial *equation) {
 	int	index = 0;
 	int	termSide = 0;
 
-	if (correctStrings[0][0] == '+' || correctStrings[0][0] == '-') {	
+	if (correctStrings[0][0] == '+' || correctStrings[0][0] == '-') {
 		term *termClass = new term(correctStrings[1], correctStrings[0][0], termSide);
 		equation->addTerm(termClass);
 		index = 2;
@@ -307,22 +309,92 @@ void	Validate::addexpression(polynomial *equation) {
 		index = 1;
 	}
 	while (index < ((int)correctStrings.size() - 1)) {
-		if (correctStrings[index][0] != '=') {
-			term *termClass = new term(correctStrings[index + 1], correctStrings[index][0], termSide);
-			equation->addTerm(termClass);
-			index += 2;
-		}
-		else {
-			termSide++;
-			if (correctStrings[index + 1][0] != '+' && correctStrings[index + 1][0]!= '-') {
-				term *termClass = new term(correctStrings[index + 1], '+', termSide);
+		cout << "index at (" << correctStrings[index] << ")" << endl;
+		if (isOperand(correctStrings[index])) {
+			if (!correctStrings[index + 1].compare("(")) {
+				term::updatePriority(correctStrings[index + 1][0]);
+				if (isOperand(correctStrings[index + 2])) {
+					term *termClass = new term(correctStrings[index + 3], correctStrings[index + 2][0], termSide);
+					termClass->setAfterBracket();
+					termClass->setOperatorBracket(correctStrings[index][0]);
+					equation->addTerm(termClass);
+					index += 4;
+				}
+				else {
+					term *termClass = new term(correctStrings[index + 2], '+', termSide);
+					termClass->setAfterBracket();
+					termClass->setOperatorBracket(correctStrings[index][0]);
+					equation->addTerm(termClass);
+					index += 3;
+				}
+			}
+			else {
+				term *termClass = new term(correctStrings[index + 1], correctStrings[index][0], termSide);
 				equation->addTerm(termClass);
 				index += 2;
 			}
+		}
+		else if (correctStrings[index][0] == ')') {
+			term::updatePriority(correctStrings[index][0]);
+			if (isOperand(correctStrings[index + 1])) {
+				term *termClass = new term(correctStrings[index + 2], correctStrings[index + 1][0], termSide);
+				equation->addTerm(termClass);
+				index += 3;
+			}
 			else {
-				index++;
+				term *termClass = new term(correctStrings[index + 1], '+', termSide);
+				termClass->setAfterBracket();
+				termClass->setOperatorBracket(correctStrings[index][0]);
+				equation->addTerm(termClass);
+				index += 2;
 			}
 		}
+		else if (correctStrings[index][0] == '(') {
+			term::updatePriority(correctStrings[index][0]);
+			if (isOperand(correctStrings[index + 1])) {
+				term *termClass = new term(correctStrings[index + 2], correctStrings[index + 1][0], termSide);
+				termClass->setAfterBracket();
+				termClass->setOperatorBracket('*');
+				equation->addTerm(termClass);
+				index += 3;
+			}
+			else {
+				term *termClass = new term(correctStrings[index + 1], '+', termSide);
+				termClass->setAfterBracket();
+				termClass->setOperatorBracket('*');
+				equation->addTerm(termClass);
+				index += 2;
+			}
+		}
+		// if (correctStrings[index][0] != '=') {
+		// 	if (!correctStrings[index].compare("(") || !correctStrings[index].compare(")")) {
+		// 		term::updatePriority(correctStrings[index][0]);
+		// 		if (correctStrings[index + 1][0] != '+' && correctStrings[index + 1][0]!= '-') {
+		// 			term *termClass = new term(correctStrings[index + 1], '+', termSide);
+		// 			equation->addTerm(termClass);
+		// 			index += 2;
+		// 		}
+		// 		else {
+		// 			index++;
+		// 		}
+		// 	}
+		// 	else {
+		// 		term *termClass = new term(correctStrings[index + 1], correctStrings[index][0], termSide);
+		// 		equation->addTerm(termClass);
+		// 		index += 2;
+		// 	}
+		// }
+		// else {
+		// 	termSide++;
+		// 	if (correctStrings[index + 1][0] != '+' && correctStrings[index + 1][0]!= '-') {
+		// 		term *termClass = new term(correctStrings[index + 1], '+', termSide);
+		// 		equation->addTerm(termClass);
+		// 		index += 2;
+		// 	}
+		// 	else {
+		// 		index++;
+		// 	}
+		// }
 	}
 }
 

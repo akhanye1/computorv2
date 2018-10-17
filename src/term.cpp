@@ -1,5 +1,8 @@
 #include "../computorv.h"
 
+int term::priorityLevel = 0;
+int term::maxPriority = 0;
+
 term::term(int termSide) {
     this->isConstant = false;
     this->isVariable = false;
@@ -107,6 +110,8 @@ term::term(string str, char operand, int termSide) {
     this->isExponent = false;
     this->termSide = termSide;
     this->operand = operand;
+    this->order = priorityLevel;
+    this->afterBracket = false;
     fillTerm(str);
 }
 
@@ -209,7 +214,8 @@ void    term::toString() {
     } else {
         cout << "Right hand side";
     }
-    cout << " Side : (" << this->termSide << ") " << endl;
+    cout << " Side : (" << this->termSide << ") ";
+    cout << " | Priority : " << this->order << endl;
 }
 
 float   term::getConstant() const { return (this->constant); }
@@ -305,4 +311,29 @@ void    term::replaceVariable(float value) {
     this->isVariable = false;
     this->isConstant = true;
     this->constant = value;
+}
+
+void    term::updatePriority(char bracketType) {
+    if (bracketType == '(') {
+        priorityLevel++;
+        maxPriority++;
+        return ;
+    }
+    priorityLevel--;
+}
+
+void    term::setAfterBracket() {
+    this->afterBracket = true;
+}
+
+void    term::setOperatorBracket(char bracketOperator) {
+    this->bracketOperator = bracketOperator;
+}
+
+bool    term::isAfterBracket() {
+    return (this->afterBracket);
+}
+
+char    term::getBracketOperator() {
+    return (this->bracketOperator);
 }

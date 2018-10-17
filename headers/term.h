@@ -13,9 +13,13 @@ class term {
         bool        isConstant;
         bool        isVariable;
         bool        isExponent;
-        char        order;
+        bool        afterBracket;
+        char        bracketOperator;
+        int         order;
         char        operand;
         int         termSide;
+        static int  priorityLevel;
+        static int  maxPriority;
         void        fillTerm(string str);
 
     public:
@@ -50,5 +54,10 @@ class term {
         void    matchTerm(term rhs);
         float   getCorrectValue() const;
         void    replaceVariable(float value);
+        static void    updatePriority(char bracketType);
+        void    setAfterBracket();
+        void    setOperatorBracket(char bracketOperator);
+        bool    isAfterBracket();
+        char    getBracketOperator();
 };
 #endif
