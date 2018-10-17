@@ -366,35 +366,6 @@ void	Validate::addexpression(polynomial *equation) {
 				index += 2;
 			}
 		}
-		// if (correctStrings[index][0] != '=') {
-		// 	if (!correctStrings[index].compare("(") || !correctStrings[index].compare(")")) {
-		// 		term::updatePriority(correctStrings[index][0]);
-		// 		if (correctStrings[index + 1][0] != '+' && correctStrings[index + 1][0]!= '-') {
-		// 			term *termClass = new term(correctStrings[index + 1], '+', termSide);
-		// 			equation->addTerm(termClass);
-		// 			index += 2;
-		// 		}
-		// 		else {
-		// 			index++;
-		// 		}
-		// 	}
-		// 	else {
-		// 		term *termClass = new term(correctStrings[index + 1], correctStrings[index][0], termSide);
-		// 		equation->addTerm(termClass);
-		// 		index += 2;
-		// 	}
-		// }
-		// else {
-		// 	termSide++;
-		// 	if (correctStrings[index + 1][0] != '+' && correctStrings[index + 1][0]!= '-') {
-		// 		term *termClass = new term(correctStrings[index + 1], '+', termSide);
-		// 		equation->addTerm(termClass);
-		// 		index += 2;
-		// 	}
-		// 	else {
-		// 		index++;
-		// 	}
-		// }
 	}
 }
 
