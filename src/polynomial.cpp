@@ -109,7 +109,6 @@ void    polynomial::solveExponents(int start) {
     while (start < counter) {
         if (this->terms.at(start).getConstant() == 0 && this->terms.at(start).isVar()) {
             this->terms.erase(this->terms.begin() + start);
-            cout << "Removed term" << endl;
             counter--;
             return (solveExponents(start));
         }
@@ -136,7 +135,9 @@ void    polynomial::solveByOrder(int start, char check) {
         return ;
     }
     while (start < counter) {
-        if (this->terms.at(start).getOperand() == check) {
+        if (this->terms.at(start).getOperand() == check &&
+                this->terms.at(start).getOrder() == this->priorityLevel &&
+                this->terms.at(start - 1).getOrder() == this->priorityLevel) {
             if (this->terms.at(start - 1).addTerm(this->terms.at(start))) {
                 moveLeft(this->terms.at(start - 1), start - 1, start);
                 return (solveByOrder(start, check));
@@ -146,13 +147,65 @@ void    polynomial::solveByOrder(int start, char check) {
     }
 }
 
+int     polynomial::getPriorityIndex(int start) {
+    while (start < counter) {
+        if (this->terms.at(start).getOrder() == this->priorityLevel) {
+            return (start);
+        }
+        start++;
+    }
+    return (-1);
+}
+
+void    polynomial::simplifyBracket(int start) {
+    int     times = 0;
+    // float   tempValue;
+    int     index;
+    int     startIndex = start;
+
+    while (start < counter) {
+        if (this->terms.at(start).getOrder() == this->priorityLevel) {
+            times++;
+        }
+        start++;
+    }
+    cout << "Times :: " << times << endl;
+    if (times == 1 && counter > 1) {
+        if ((index = getPriorityIndex(startIndex)) == -1) {
+            cout << "Index is -1" << endl;
+            return ;
+        }
+        this->getTerm(index)->setOrder(this->priorityLevel - 1);
+        cout << "Index :: " << index << endl;
+        if (this->getTerm(index)->isAfterBracket()) {
+            this->getTerm(index)->setOperand(this->getTerm(index)->getBracketOperator());
+        }
+        // if (this->terms.at(index - 1).addTerm(this->terms.at(index))) {
+        //     moveLeft(this->terms.at(index - 1), index - 1, index);
+        // }
+    }
+    else {
+        cout << "Still to be implemented" << endl;
+    }
+}
+
 void    polynomial::bodmasRule(int start) {
+    cout << "Bodmas :: " << start << endl;
     solveExponents(start);
     solveByOrder(start + 1, '/');
     solveByOrder(start + 1, '*');
     solveByOrder(start + 1, '+');
     solveByOrder(start + 1, '-');
     solveExponents(start);
+    showAll();
+    cout << "Bodmas debug 1" << endl;
+    simplifyBracket(start);
+    showAll();
+    cout << "Level :: " << this->priorityLevel << endl;
+    if (this->priorityLevel > 0) {
+        this->priorityLevel--;
+        return (bodmasRule(start));
+    }
 }
 
 void    polynomial::showAll() {
@@ -486,6 +539,7 @@ bool    polynomial::isImaginary() {
 
 void    polynomial::calculate() {
     bool isImaginery = this->isImaginary();
+    this->priorityLevel = term::getMaxPriorityLevel();
     bodmasRule(0);
     // cout << "After bodmas rule" << endl;
     // showAll();

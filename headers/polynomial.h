@@ -20,6 +20,9 @@ class polynomial {
         void            solveSquareRoot();
         static bool     debug;
         int             equaitonType;
+        int             priorityLevel;
+        void            simplifyBracket(int start);
+        int             getPriorityIndex(int start);
 
     public:
         polynomial(void);

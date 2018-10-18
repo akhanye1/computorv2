@@ -337,3 +337,11 @@ bool    term::isAfterBracket() {
 char    term::getBracketOperator() {
     return (this->bracketOperator);
 }
+
+int     term::getMaxPriorityLevel() {
+    return (maxPriority);
+}
+
+void    term::setOrder(int orderTemp) {
+    this->order = orderTemp;
+}
