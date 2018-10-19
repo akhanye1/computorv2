@@ -57,8 +57,8 @@ class term {
         static void    updatePriority(char bracketType);
         void    setAfterBracket();
         void    setOperatorBracket(char bracketOperator);
-        bool    isAfterBracket();
-        char    getBracketOperator();
+        bool    isAfterBracket() const;
+        char    getBracketOperator() const;
         static int     getMaxPriorityLevel();
         void    setOrder(int order);
 };

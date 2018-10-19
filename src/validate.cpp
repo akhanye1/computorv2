@@ -309,7 +309,7 @@ void	Validate::addexpression(polynomial *equation) {
 		index = 1;
 	}
 	while (index < ((int)correctStrings.size() - 1)) {
-		cout << "index at (" << correctStrings[index] << ")" << endl;
+		// cout << "index at (" << correctStrings[index] << ")" << endl;
 		if (isOperand(correctStrings[index])) {
 			if (!correctStrings[index + 1].compare("(")) {
 				term::updatePriority(correctStrings[index + 1][0]);
@@ -406,9 +406,9 @@ bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction 
 	}
 	splitString(poly);
 	correctSplit();
-	for (size_t i = 0; i < correctStrings.size(); i++) {
-		cout << "String :: " << correctStrings.at(i) << endl;
-	}
+	// for (size_t i = 0; i < correctStrings.size(); i++) {
+	// 	cout << "String :: " << correctStrings.at(i) << endl;
+	// }
 	addexpression(equation);
 	equation->showAll();
 	return (checkVariables(equation, instructions));

@@ -1,4 +1,4 @@
-#include "../computorv.h"
+ #include "../computorv.h"
 
 int term::priorityLevel = 0;
 int term::maxPriority = 0;
@@ -31,6 +31,8 @@ term    & term::operator=(term const & rhs) {
     this->order = rhs.getOrder();
     this->operand = rhs.getOperand();
     this->termSide = rhs.getSide();
+    this->afterBracket = rhs.isAfterBracket();
+    this->bracketOperator = rhs.getBracketOperator();
     return (*this);
 }
 
@@ -112,6 +114,7 @@ term::term(string str, char operand, int termSide) {
     this->operand = operand;
     this->order = priorityLevel;
     this->afterBracket = false;
+    this->bracketOperator = ' ';
     fillTerm(str);
 }
 
@@ -215,7 +218,9 @@ void    term::toString() {
         cout << "Right hand side";
     }
     cout << " Side : (" << this->termSide << ") ";
-    cout << " | Priority : " << this->order << endl;
+    cout << " | Priority : " << this->order;
+    cout << " >> is first :: " << this->afterBracket;
+    cout << " >> bracket operator :: " << this->bracketOperator << endl;
 }
 
 float   term::getConstant() const { return (this->constant); }
@@ -330,18 +335,18 @@ void    term::setOperatorBracket(char bracketOperator) {
     this->bracketOperator = bracketOperator;
 }
 
-bool    term::isAfterBracket() {
+bool    term::isAfterBracket() const {
     return (this->afterBracket);
 }
 
-char    term::getBracketOperator() {
+char    term::getBracketOperator() const {
     return (this->bracketOperator);
+}
+
+void    term::setOrder(int tempOrder) {
+    this->order = tempOrder;
 }
 
 int     term::getMaxPriorityLevel() {
     return (maxPriority);
-}
-
-void    term::setOrder(int orderTemp) {
-    this->order = orderTemp;
 }
