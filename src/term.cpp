@@ -250,11 +250,15 @@ bool    term::sameAs(term compareTerm) {
 bool    term::addTerm(term addTerm) {
     float temp1, temp2, tempSum;
 
-    temp1 = this->constant;
+    temp1 = this->getCorrectValue();
     temp2 = addTerm.getCorrectValue();
     if (addTerm.getOperand() == '+' || addTerm.getOperand() == '-') {
         if (this->sameAs(addTerm)) {
             tempSum = temp1 + temp2;
+            if (tempSum < 0) {
+                this->setOperand('-');
+                tempSum *= -1;
+            }
             this->setConstant(tempSum);
             return (true);
         }

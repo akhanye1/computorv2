@@ -178,6 +178,7 @@ void    polynomial::simplifyBracket(int start) {
         this->getTerm(index)->setOrder(this->priorityLevel - 1);
         cout << "Index :: " << index << endl;
         if (this->getTerm(index)->isAfterBracket()) {
+            this->getTerm(index)->setConstant(this->getTerm(index)->getCorrectValue());
             this->getTerm(index)->setOperand(this->getTerm(index)->getBracketOperator());
         }
         // if (this->terms.at(index - 1).addTerm(this->terms.at(index))) {
