@@ -381,13 +381,16 @@ bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
 	int		unknownCount = 0;
 	string	unknownVar;
 
+	unknownVar = "";
 	while (++index < len) {
 		isImaginary = false;
 		if (equation->getTerm(index)->isVar()) {
 			if (instructions.findInstruction(equation->getTerm(index)->getVariable()) == NULL) {
 				if (equation->getTerm(index)->getVariable().compare("i")) {
 					if (unknownCount >= 1) {
-						return (false);
+						if (equation->getTerm(index)->getVariable().compare(unknownVar)) {
+							return (false);
+						}
 					}
 					unknownCount++;
 					unknownVar = equation->getTerm(index)->getVariable();

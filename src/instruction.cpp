@@ -5,10 +5,12 @@ vector<Instruction> Instruction::instructions;
 Instruction::Instruction() {
     this->valid = false;
     this->matrix = NULL;
+    this->function = NULL;
 }
 
 Instruction::Instruction(string str) {
     this->matrix = NULL;
+    this->function = NULL;
     this->splitString(str, '=', this->commands);
     this->isPrint = false;
     if (this->commands.size() != 2) {
@@ -24,7 +26,6 @@ Instruction& Instruction::operator=(Instruction const &rhs) {
     this->instructionType = rhs.getType();
     this->instruction = rhs.getInstruction();
     this->command = rhs.getCommand();
-    // this->matrix = rhs.getMatrix();
     return (*this);
 }
 
@@ -55,7 +56,7 @@ bool    Instruction::setEquation(string rhs_string) {
     equation->calculate();
     // equation->showAll();
     // cout << "Counter : " << equation->counter << endl;
-    if (equation->counter == 1) {
+    if (equation->counter == 1 && !equation->isFunction()) {
         tempInstruction = new Instruction();
         tempInstruction->setInstruction(equation->getEquationType());
         if (equation->getEquationType() == VARIABLE || equation->getEquationType() == FUNCTION) {
@@ -338,9 +339,16 @@ float       Instruction::getfloatValue() const {
 Instruction *Instruction::findInstruction(string str) {
     int index = -1;
     int len = (int)instructions.size();
+    string  compareName;
 
+    if (str.find("(") == string::npos) {
+        compareName = str;
+    }
+    else {
+        compareName = this->getFunctionName(str);
+    }
     while (++index < len) {
-        if (instructions.at(index).compareCommand(str)) {
+        if (instructions.at(index).compareCommand(compareName)) {
             foundIndex = index;
             return (&instructions.at(index));
         }
