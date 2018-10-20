@@ -36,8 +36,18 @@ void        polynomial::changeSide(term tempTerm, int index) {
 }
 
 void        polynomial::moveLeft(term tempTerm, int changeIndex, int removeIndex) {
+    float tempValue;
+
+    tempValue = 0;
     this->terms.at(changeIndex).replaceTerm(tempTerm);
     this->terms.erase(this->terms.begin() +  removeIndex);
+    if (this->terms.at(changeIndex).getOperand() == '+' ||
+        this->terms.at(changeIndex).getOperand() == '-') {
+            if (this->terms.at(changeIndex).getConstant() < 0) {
+                tempValue = -1 * this->terms.at(changeIndex).getConstant();
+                this->terms.at(changeIndex).setConstant(tempValue);
+            }
+    }
     polynomial::counter--;
 }
 
@@ -67,7 +77,7 @@ void        polynomial::showReduced(void) {
         }
         if (this->terms.at(x).isVar()) {
             cout << this->terms.at(x).getVariable();
-        } 
+        }
         if (this->terms.at(x).isExp()) {
             cout << "^" << this->terms.at(x).getExponent();
         }
@@ -197,6 +207,7 @@ void    polynomial::bodmasRule(int start) {
     solveByOrder(start + 1, '*');
     solveByOrder(start + 1, '+');
     solveByOrder(start + 1, '-');
+    // solveByOrder(start + 1, '%');
     solveExponents(start);
     showAll();
     cout << "Bodmas debug 1" << endl;
@@ -229,7 +240,7 @@ void    polynomial::moveRight(int index) {
 
 term    *getEmptyTerm() {
     term *temp = new term("0", '+', 0);
-    return (temp);    
+    return (temp);
 }
 
 void    polynomial::solveExpression() {
@@ -265,7 +276,7 @@ void    polynomial::solveExpression() {
             return ;
         }
     }
-    showExpression("move to right side");    
+    showExpression("move to right side");
     tempVal = rightTerm->getCorrectValue() / varTerm->getCorrectValue();
     varTerm->setConstant(varTerm->getCorrectValue()/ varTerm->getCorrectValue());
     varTerm->setOperand('+');
@@ -276,7 +287,7 @@ void    polynomial::solveExpression() {
     else {
         rightTerm->setOperand('-');
     }
-    showExpression("Divide both sides");    
+    showExpression("Divide both sides");
     cout << "The solution is:" << endl;
     cout << tempVal << endl;
 }
@@ -417,7 +428,7 @@ float   squareRoot(float goal) {
 
 void    showPositiveNegativeDiscriminant(float a, float b, float discriminant, string name) {
     float sol1, sol2, sqroot;
-    
+
     cout << "Discriminant is strickly " << name << " , the two " << name << " are" << endl;
     sqroot = squareRoot(discriminant);
     sol1 = ((-1 * b) + sqroot) / (2 * a);
@@ -428,7 +439,7 @@ void    showPositiveNegativeDiscriminant(float a, float b, float discriminant, s
 
 void    showZeroDiscriminant(float a, float b, float discriminant) {
     float sol1;
-    
+
     cout << "Discriminant is strickly zero, the solutions is" << endl;
     sol1 = ((-1 * b) + discriminant) / (2 * a);
     cout << sol1 << endl;
@@ -452,7 +463,7 @@ void    polynomial::solveSquareRoot() {
         varTerm = &this->terms.at(1);
         rightTerm = &this->terms.at(0);
     }
-    showExpression("move constant to right hand side");    
+    showExpression("move constant to right hand side");
     tempVal = rightTerm->getCorrectValue() / varTerm->getCorrectValue();
     varTerm->setConstant(varTerm->getCorrectValue()/ varTerm->getCorrectValue());
     varTerm->setOperand('+');

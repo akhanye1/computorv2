@@ -171,11 +171,19 @@ int		Validate::lastIndexOfAlpha(string str) {
 	int	bracketsCount = 0;
 	int	i = -1;
 	int	len = (int)str.length();
+	int	powerCount = 0;
 
 	while (++i < len) {
 		if (!isalpha(str[i])) {
 			if ((str[i] == '(' || str[i] == ')') && bracketsCount < 2) {
 				bracketsCount++;
+			}
+			else if (str[i] == '^' && powerCount < 1) {
+				if (isdigit(str[i + 1])) {
+					cout << "next item :: " << str[i + 1] << " | text :: " << str.substr(i + 1) << endl;
+					i += 1 + (this->lastIndexOfFloat(str.substr(i + 1)) + 1);
+					cout << "i @ :: " << str[i] << endl;
+				}
 			}
 			else {
 				return (i);
@@ -202,11 +210,15 @@ int		Validate::lastIndexOfFloat(string str) {
 	int	i = -1;
 	int	periodCounter = 0;
 	int len = (int)str.length();
+	int	powerCounter = 0;
 
 	while (++i < len) {
 		if (!isdigit(str[i])) {
 			if (str[i] == '.' && periodCounter < 1) {
 				periodCounter++;
+			}
+			else if (str[i] == '^' && powerCounter < 1) {
+				powerCounter++;
 			}
 			else {
 				return (i);
@@ -415,9 +427,9 @@ bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction 
 	}
 	splitString(poly);
 	correctSplit();
-	// for (size_t i = 0; i < correctStrings.size(); i++) {
-	// 	cout << "String :: " << correctStrings.at(i) << endl;
-	// }
+	for (size_t i = 0; i < correctStrings.size(); i++) {
+		cout << "String :: " << correctStrings.at(i) << endl;
+	}
 	addexpression(equation);
 	equation->showAll();
 	return (checkVariables(equation, instructions));
