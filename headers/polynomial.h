@@ -19,7 +19,7 @@ class polynomial {
         float           getC();
         void            solveSquareRoot();
         static bool     debug;
-        int             equaitonType;
+        int             equationType;
         int             priorityLevel;
         void            simplifyBracket(int start);
         int             getPriorityIndex(int start);
@@ -47,6 +47,8 @@ class polynomial {
         void            calculate();
         int             getEquationType() const;
         bool            isImaginary();
+        bool            isFunction();
         string          toEquation();
+        string          getFunctionVariable() const;
 };
 #endif

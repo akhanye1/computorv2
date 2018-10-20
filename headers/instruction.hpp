@@ -6,6 +6,7 @@
 using namespace std;
 
 class Matrix;
+class Functions;
 class Instruction {
     private:
         vector<string>              commands;
@@ -14,6 +15,7 @@ class Instruction {
         float                       floatValue;
         bool                        isPrint;
         Matrix                      *matrix;
+        Functions                   *function;
         int                         instructionType;
         bool                        valid;
         string                      command;
@@ -28,6 +30,9 @@ class Instruction {
         bool                        prepareForPrint(string str);
         int                         foundIndex;
         bool                        checkOneFunctionValue(string rhs_string);
+        bool                        setupFunction(polynomial *equation);
+        string                      getVariableName(string str);
+        string                      getFunctionName(string str);
 
 
     public:
@@ -53,6 +58,8 @@ class Instruction {
         static void                 splitString(string str, char deliminator, vector<string> &tempVector);
         Matrix                      *getMatrix();
         void                        setMatrix(Matrix *matrix);
+        void                        setFunction(Functions *function);
+        Functions                   *getFunction();
 };
 
 #endif

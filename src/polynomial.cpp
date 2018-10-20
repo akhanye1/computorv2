@@ -531,27 +531,49 @@ bool    polynomial::isImaginary() {
     for (int i = 0; i < counter; i++) {
         if (this->terms.at(i).isVar() && (!this->terms.at(i).getVariable().compare("i") ||
             !this->terms.at(i).getVariable().compare("I"))) {
-                this->equaitonType = IMAGINERY;
+                this->equationType = IMAGINERY;
                 return (true);
             }
     }
     return (false);
 }
 
+bool    polynomial::isFunction() {
+    for (int i = 0; i < counter; i++) {
+        if (this->terms.at(i).isVar() && (this->terms.at(i).getVariable().compare("i") ||
+            this->terms.at(i).getVariable().compare("I"))) {
+                this->equationType = FUNCTION;
+                return (true);
+            }
+    }
+    return (false);
+}
+
+string  polynomial::getFunctionVariable() const {
+    for (int i = 0; i < counter; i++) {
+        if (this->terms.at(i).isVar() && (this->terms.at(i).getVariable().compare("i") ||
+            this->terms.at(i).getVariable().compare("I"))) {
+                return (this->terms.at(i).getVariable());
+        }
+    }
+    return ("");
+}
+
 void    polynomial::calculate() {
     bool isImaginery = this->isImaginary();
+    bool isFunction = this->isFunction();
     this->priorityLevel = term::getMaxPriorityLevel();
     bodmasRule(0);
     // cout << "After bodmas rule" << endl;
     // showAll();
-    if (!isImaginery) {
-        this->equaitonType = VARIABLE;
+    if (!isImaginery && !isFunction) {
+        this->equationType = VARIABLE;
     }
 }
 
 
 int     polynomial::getEquationType() const {
-    return this->equaitonType;
+    return this->equationType;
 }
 
 string  polynomial::toEquation() {

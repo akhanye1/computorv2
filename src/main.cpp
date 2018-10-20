@@ -89,6 +89,10 @@ void	processInstruction(string str) {
 					cout << "MATRICES" << endl;
 					cout << instruction->getMatrix()->toString() << endl;
 				break;
+			case FUNCTION:
+					cout << "FUNCTION" << endl;
+					cout << instruction->getFunction()->toString() << endl;
+				break;
 		}
 	}
 	else {

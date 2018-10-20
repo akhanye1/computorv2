@@ -378,19 +378,25 @@ bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
 	int		len = (int)equation->counter;
 	term	*tempTerm;
 	bool	isImaginary;
+	int		unknownCount = 0;
+	string	unknownVar;
 
 	while (++index < len) {
 		isImaginary = false;
 		if (equation->getTerm(index)->isVar()) {
 			if (instructions.findInstruction(equation->getTerm(index)->getVariable()) == NULL) {
 				if (equation->getTerm(index)->getVariable().compare("i")) {
-					return (false);
+					if (unknownCount >= 1) {
+						return (false);
+					}
+					unknownCount++;
+					unknownVar = equation->getTerm(index)->getVariable();
 				}
 				else {
 					isImaginary = true;
 				}
 			}
-			if (!isImaginary) {
+			if (!isImaginary && unknownVar.compare(equation->getTerm(index)->getVariable())) {
 				tempTerm = equation->getTerm(index);
 				tempTerm->replaceVariable(instructions.findInstruction(tempTerm->getVariable())->getfloatValue());
 			}

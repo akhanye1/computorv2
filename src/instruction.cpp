@@ -28,6 +28,21 @@ Instruction& Instruction::operator=(Instruction const &rhs) {
     return (*this);
 }
 
+bool    Instruction::setupFunction(polynomial *equation) {
+    tempInstruction = new Instruction();
+    Functions *function = new Functions();
+    
+    function->setVariableName(equation->getFunctionVariable());
+    function->setEquation(equation);
+    tempInstruction->setFunction(function);
+    tempInstruction->setInstruction(FUNCTION);
+    return (true);
+}
+
+void    Instruction::setFunction(Functions *function) {
+    this->function = function;
+}
+
 bool    Instruction::setEquation(string rhs_string) {
     polynomial *equation = new polynomial();
     Validate validator;
@@ -59,6 +74,9 @@ bool    Instruction::setEquation(string rhs_string) {
         tempInstruction->setInstruction(IMAGINERY);
         return (true);
     }
+    else if (equation->isFunction() && equation->counter > 0) {
+        return (this->setupFunction(equation));
+    } 
     return (false);
 }
 
@@ -127,6 +145,7 @@ bool    Instruction::checkRightHandSide(vector<string> rhs, bool isFunction, str
         }
         return (this->setEquation(rhs_str));
     }
+    cout << "Function identified" << endl;
     if (rhs.size() == 1) {
         return (this->checkOneFunctionValue(rhs_str));
     }
@@ -162,14 +181,55 @@ bool    Instruction::setVariableData(vector<string> rightInstructions, string st
     return (true);
 }
 
+string  Instruction::getVariableName(string str) {
+    vector<string>  strSplit;
+
+    this->splitString(str, '(', strSplit);
+    if (strSplit.size() != 2) {
+        return ("");
+    }
+    if (strSplit[1][strSplit[1].length() - 1] != ')') {
+        return ("");
+    }
+    return (strSplit[1].substr(0, strSplit[1].length() - 1));
+}
+
+string  Instruction::getFunctionName(string str) {
+    vector<string>  strSplit;
+
+    this->splitString(str, '(', strSplit);
+    if (strSplit.size() == 2) {
+        return (strSplit.at(0));
+    }
+    return ("");
+}
+
+Functions   *Instruction::getFunction() {
+    return (this->function);
+}
+
 bool    Instruction::setFunctionData(vector<string> rhs_array, string str, string rhs_string) {
     tempInstruction = NULL;
+    string              variableName;
+
     if (str.compare("?")) {
         
     }
     if (!this->checkRightHandSide(rhs_array, true, rhs_string)) {
         return (false);
     }
+    if (!this->getFunctionName(str).compare("")) {
+        return (false);
+    }
+    tempInstruction->setInstructionHead(this->getFunctionName(str));
+    if (!this->getVariableName(str).compare("")) {
+        return (false);
+    }
+    variableName = getVariableName(str);
+    if (variableName.compare(tempInstruction->getFunction()->getVariableName())) {
+        return (false);
+    }
+    this->setInstructionData(*tempInstruction);
     return (true);
 }
 
@@ -211,6 +271,7 @@ void    Instruction::setInstructionData(Instruction data) {
     this->instruction = data.getInstruction();
     this->command = data.getCommand();
     this->matrix = data.getMatrix();
+    this->function = data.getFunction();
     if (savedInstruction != NULL) {
         instructions.erase(instructions.begin() + foundIndex);
     }

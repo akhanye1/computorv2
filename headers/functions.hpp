@@ -5,12 +5,15 @@
 
 class Functions {
     private:
-        string      functionName;
-        string      variable;
-        string      simplified;
-        float       placeHolder;
+        string      variableName;
+        polynomial  *equation;
+
     public:
-        Functions();  
+        Functions();
+        void        setVariableName(string variableName);
+        void        setEquation(polynomial *equation);
+        string      getVariableName() const;
+        string      toString();
 };
 
 #endif
