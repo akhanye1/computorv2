@@ -179,14 +179,14 @@ void    polynomial::simplifyBracket(int start) {
         }
         start++;
     }
-    cout << "Times :: " << times << endl;
+    // cout << "Times :: " << times << endl;
     if (times == 1 && counter > 1) {
         if ((index = getPriorityIndex(startIndex)) == -1) {
-            cout << "Index is -1" << endl;
+            // cout << "Index is -1" << endl;
             return ;
         }
         this->getTerm(index)->setOrder(this->priorityLevel - 1);
-        cout << "Index :: " << index << endl;
+        // cout << "Index :: " << index << endl;
         if (this->getTerm(index)->isAfterBracket()) {
             this->getTerm(index)->setConstant(this->getTerm(index)->getCorrectValue());
             this->getTerm(index)->setOperand(this->getTerm(index)->getBracketOperator());
@@ -201,13 +201,25 @@ void    polynomial::simplifyBracket(int start) {
 }
 
 void    polynomial::bodmasRule(int start) {
+    static int numTimes = 0;
+
     cout << "Bodmas :: " << start << endl;
     solveExponents(start);
     solveByOrder(start + 1, '/');
+    cout << "/" << endl;
+    showAll();
     solveByOrder(start + 1, '*');
+    cout << "*" << endl;
+    showAll();
+    solveByOrder(start + 1, '%');
+    cout << "%" << endl;
+    showAll();
     solveByOrder(start + 1, '+');
+    cout << "+" << endl;
+    showAll();
     solveByOrder(start + 1, '-');
-    // solveByOrder(start + 1, '%');
+    cout << "-" << endl;
+    showAll();
     solveExponents(start);
     showAll();
     cout << "Bodmas debug 1" << endl;
@@ -216,6 +228,11 @@ void    polynomial::bodmasRule(int start) {
     cout << "Level :: " << this->priorityLevel << endl;
     if (this->priorityLevel > 0) {
         this->priorityLevel--;
+        cout << "Priority level :: " << this->priorityLevel << endl;
+        return (bodmasRule(start));
+    }
+    if (numTimes == 0) {
+        numTimes++;
         return (bodmasRule(start));
     }
 }

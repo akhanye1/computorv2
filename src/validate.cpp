@@ -3,11 +3,11 @@
 char	Validate::oneVar = ' ';
 
 bool	isOperandCharector(string ch) {
-	return (ch[0] == '+' || ch[0] == '-' || ch[0] == '*' || ch[0] == '/');
+	return (ch[0] == '+' || ch[0] == '-' || ch[0] == '*' || ch[0] == '/' || ch[0] == '%');
 }
 
 bool	isOperand(string ch) {
-	return (!ch.compare("+") || !ch.compare("-") || !ch.compare("*") || !ch.compare("/"));
+	return (!ch.compare("+") || !ch.compare("-") || !ch.compare("*") || !ch.compare("/") || !ch.compare("%"));
 }
 
 bool	Validate::foundOperator(string str) {
@@ -47,9 +47,9 @@ void	Validate::splitString(string poly) {
 bool	Validate::checkPolynomialAuthentacity() {
 	int index = -1;
 
-	if (!correctStrings[0].compare("*") || !correctStrings[0].compare("/"))
+	if (!correctStrings[0].compare("*") || !correctStrings[0].compare("/") || !correctStrings[0].compare("%"))
 		return (false);
-	if (correctStrings[0][0] == '*' || correctStrings[0][0] == '/')
+	if (correctStrings[0][0] == '*' || correctStrings[0][0] == '/' || correctStrings[0][0] == '%')
 		return (false);
 	if (correctStrings[0][0] == '^')
 		return (false);
@@ -77,7 +77,7 @@ bool	mixedTerm(string term) {
 		if (isdigit(term[i])) {
 			isConst = true;
 		}
-		if (term[i] == '+' || term[i] == '-' || term[i] == '*' || term[i] == '/') {
+		if (term[i] == '+' || term[i] == '-' || term[i] == '*' || term[i] == '/' || term[i] == '%') {
 			isOp = true;
 		}
 		if (term[i] == '=') {
@@ -136,7 +136,7 @@ int	returnIndexOfOperand(string str) {
 	string	temp;
 
 	while (++index < (int)str.length()) {
-		if (str[index] == '+' || str[index] == '-' || str[index] == '*' || str[index] == '/') {
+		if (str[index] == '+' || str[index] == '-' || str[index] == '*' || str[index] == '/' || str[index] == '%') {
 			return (index);
 		}
 	}
@@ -262,7 +262,7 @@ void	Validate::splitMixedTerm(string str) {
 		return (splitForDigit(str));
 	}
 	else if (str[0] == '+' || str[0] == '-' || str[0] == '*'
-		|| str[0] == '/' || str[0] == '(' || str[0] == ')') {
+		|| str[0] == '/' || str[0] == '(' || str[0] == ')' || str[0] == '%') {
 		return (splitForOneChar(str));
 	}
 	if (str.length() > 0) {

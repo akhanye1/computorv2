@@ -253,11 +253,15 @@ bool    term::addTerm(term addTerm) {
     temp1 = this->getCorrectValue();
     temp2 = addTerm.getCorrectValue();
     if (addTerm.getOperand() == '+' || addTerm.getOperand() == '-') {
-        if (this->sameAs(addTerm)) {
+        if (this->sameAs(addTerm)) {            
             tempSum = temp1 + temp2;
+            cout << "temp1 (" << temp1 << ") + temp2 (" << temp2 << ") = " << tempSum << endl;
             if (tempSum < 0) {
                 this->setOperand('-');
                 tempSum *= -1;
+            }
+            else {
+                this->setOperand('+');
             }
             this->setConstant(tempSum);
             return (true);
@@ -269,7 +273,16 @@ bool    term::addTerm(term addTerm) {
                 return (false);
             }
         }
-        tempSum = (addTerm.getOperand() == '*') ? temp1 * temp2 : temp1 / temp2;
+        if (addTerm.getOperand() == '*') {
+            tempSum = temp1 * temp2;
+        }
+        else if (addTerm.getOperand() == '/') {
+            tempSum = temp1 / temp2;
+        }
+        else {
+            tempSum = (int)temp1 % (int)temp2;
+        }
+        // tempSum = (addTerm.getOperand() == '*') ? temp1 * temp2 : temp1 / temp2;
         this->setConstant(tempSum);
         matchTerm(addTerm);
         return (true);
