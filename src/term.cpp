@@ -281,7 +281,7 @@ bool    term::addTerm(term addTerm) {
         }
         else {
             tempSum = (int)temp1 % (int)temp2;
-        }
+        } 
         // tempSum = (addTerm.getOperand() == '*') ? temp1 * temp2 : temp1 / temp2;
         this->setConstant(tempSum);
         matchTerm(addTerm);
@@ -330,9 +330,13 @@ float   term::getCorrectValue() const {
 }
 
 void    term::replaceVariable(float value) {
+    float tempValue = 1;
+    if (this->isConstant) {
+        tempValue = this->constant;
+    }
     this->isVariable = false;
     this->isConstant = true;
-    this->constant = value;
+    this->constant = value * tempValue;
 }
 
 void    term::updatePriority(char bracketType) {

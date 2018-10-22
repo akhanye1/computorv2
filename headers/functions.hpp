@@ -7,6 +7,7 @@ class Functions {
     private:
         string      variableName;
         polynomial  *equation;
+        float       tempValue;
 
     public:
         Functions();
@@ -14,6 +15,7 @@ class Functions {
         void        setEquation(polynomial *equation);
         string      getVariableName() const;
         string      toString();
+        float       getFunctionValue(float paramater);
 };
 
 #endif

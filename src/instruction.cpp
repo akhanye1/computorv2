@@ -162,6 +162,7 @@ bool    Instruction::prepareForPrint(string str) {
     cout << "Instruction found" << endl;
     *this = *findInstruction(str);
     this->setMatrix(findInstruction(str)->getMatrix());
+    this->setFunction(findInstruction(str)->getFunction());
     this->isPrint = true;
     return (true);
 }
@@ -196,13 +197,10 @@ string  Instruction::getVariableName(string str) {
 }
 
 string  Instruction::getFunctionName(string str) {
-    vector<string>  strSplit;
-
-    this->splitString(str, '(', strSplit);
-    if (strSplit.size() == 2) {
-        return (strSplit.at(0));
+    if (str.find("(") == string::npos) {
+        return ("");
     }
-    return ("");
+    return (str.substr(0, str.find("(") + 1));
 }
 
 Functions   *Instruction::getFunction() {

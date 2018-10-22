@@ -115,8 +115,10 @@ void    polynomial::solveExponents(int start) {
     int     tempNumber;
     float   number;
     int     exponent;
-
-    while (start < counter) {
+    int     maxTerms;
+    
+    maxTerms = this->getMaxTerms();
+    while (start < maxTerms) {
         if (this->terms.at(start).getConstant() == 0 && this->terms.at(start).isVar()) {
             this->terms.erase(this->terms.begin() + start);
             counter--;
@@ -141,10 +143,11 @@ void    polynomial::solveExponents(int start) {
 }
 
 void    polynomial::solveByOrder(int start, char check) {
-    if (start >= counter) {
+    int maxTerms = this->terms.size();
+    if (start >= maxTerms) {
         return ;
     }
-    while (start < counter) {
+    while (start < maxTerms) {
         if (this->terms.at(start).getOperand() == check &&
                 this->terms.at(start).getOrder() == this->priorityLevel &&
                 this->terms.at(start - 1).getOrder() == this->priorityLevel) {
@@ -158,7 +161,9 @@ void    polynomial::solveByOrder(int start, char check) {
 }
 
 int     polynomial::getPriorityIndex(int start) {
-    while (start < counter) {
+    int maxTerms = this->terms.size();
+
+    while (start < maxTerms) {
         if (this->terms.at(start).getOrder() == this->priorityLevel) {
             return (start);
         }
@@ -172,15 +177,16 @@ void    polynomial::simplifyBracket(int start) {
     // float   tempValue;
     int     index;
     int     startIndex = start;
+    int     maxTerms = this->terms.size();
 
-    while (start < counter) {
+    while (start < maxTerms) {
         if (this->terms.at(start).getOrder() == this->priorityLevel) {
             times++;
         }
         start++;
     }
     // cout << "Times :: " << times << endl;
-    if (times == 1 && counter > 1) {
+    if (times == 1 && maxTerms > 1) {
         if ((index = getPriorityIndex(startIndex)) == -1) {
             // cout << "Index is -1" << endl;
             return ;
@@ -203,32 +209,18 @@ void    polynomial::simplifyBracket(int start) {
 void    polynomial::bodmasRule(int start) {
     static int numTimes = 0;
 
-    cout << "Bodmas :: " << start << endl;
+    // cout << "Bodmas :: " << start << endl;
     solveExponents(start);
     solveByOrder(start + 1, '/');
-    cout << "/" << endl;
-    showAll();
     solveByOrder(start + 1, '*');
-    cout << "*" << endl;
-    showAll();
     solveByOrder(start + 1, '%');
-    cout << "%" << endl;
-    showAll();
     solveByOrder(start + 1, '+');
-    cout << "+" << endl;
-    showAll();
     solveByOrder(start + 1, '-');
-    cout << "-" << endl;
-    showAll();
     solveExponents(start);
-    showAll();
-    cout << "Bodmas debug 1" << endl;
     simplifyBracket(start);
-    showAll();
-    cout << "Level :: " << this->priorityLevel << endl;
+    // showAll();
     if (this->priorityLevel > 0) {
         this->priorityLevel--;
-        cout << "Priority level :: " << this->priorityLevel << endl;
         return (bodmasRule(start));
     }
     if (numTimes == 0) {
@@ -239,9 +231,11 @@ void    polynomial::bodmasRule(int start) {
 
 void    polynomial::showAll() {
     int index = -1;
+    int maxIndex;
 
     cout << "START START START" << endl;
-    while (++index < counter) {
+    maxIndex = this->terms.size();
+    while (++index < maxIndex) {
         this->getTerm(index)->toString();
     }
     cout << "END END END" << endl;
@@ -556,7 +550,9 @@ void    polynomial::multiplyVariables() {
 }
 
 bool    polynomial::isImaginary() {
-    for (int i = 0; i < counter; i++) {
+    int maxTerms = this->terms.size();
+
+    for (int i = 0; i < maxTerms; i++) {
         if (this->terms.at(i).isVar() && (!this->terms.at(i).getVariable().compare("i") ||
             !this->terms.at(i).getVariable().compare("I"))) {
                 this->equationType = IMAGINERY;
@@ -567,7 +563,9 @@ bool    polynomial::isImaginary() {
 }
 
 bool    polynomial::isFunction() {
-    for (int i = 0; i < counter; i++) {
+    int maxTerms = this->terms.size();
+
+    for (int i = 0; i < maxTerms; i++) {
         if (this->terms.at(i).isVar() && (this->terms.at(i).getVariable().compare("i") ||
             this->terms.at(i).getVariable().compare("I"))) {
                 this->equationType = FUNCTION;
@@ -578,7 +576,9 @@ bool    polynomial::isFunction() {
 }
 
 string  polynomial::getFunctionVariable() const {
-    for (int i = 0; i < counter; i++) {
+    int maxTerms = this->terms.size();
+
+    for (int i = 0; i < maxTerms; i++) {
         if (this->terms.at(i).isVar() && (this->terms.at(i).getVariable().compare("i") ||
             this->terms.at(i).getVariable().compare("I"))) {
                 return (this->terms.at(i).getVariable());
@@ -626,4 +626,8 @@ string  polynomial::toEquation() {
     }
     tempString = ss.str();
     return (tempString);
+}
+
+int     polynomial::getMaxTerms() const {
+    return ((int)this->terms.size());
 }

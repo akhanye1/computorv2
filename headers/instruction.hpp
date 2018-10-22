@@ -31,7 +31,6 @@ class Instruction {
         int                         foundIndex;
         bool                        checkOneFunctionValue(string rhs_string);
         bool                        setupFunction(polynomial *equation);
-        string                      getVariableName(string str);
         string                      getFunctionName(string str);
 
 
@@ -60,6 +59,7 @@ class Instruction {
         void                        setMatrix(Matrix *matrix);
         void                        setFunction(Functions *function);
         Functions                   *getFunction();
+        string                      getVariableName(string str);
 };
 
 #endif

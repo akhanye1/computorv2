@@ -50,5 +50,6 @@ class polynomial {
         bool            isFunction();
         string          toEquation();
         string          getFunctionVariable() const;
+        int             getMaxTerms() const;
 };
 #endif

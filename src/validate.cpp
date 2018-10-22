@@ -185,6 +185,9 @@ int		Validate::lastIndexOfAlpha(string str) {
 					cout << "i @ :: " << str[i] << endl;
 				}
 			}
+			else if (bracketsCount > 0 && isdigit(str[i])) {
+
+			}
 			else {
 				return (i);
 			}
@@ -386,18 +389,21 @@ void	Validate::addexpression(polynomial *equation) {
 //
 
 bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
-	int		index = -1;
-	int		len = (int)equation->counter;
-	term	*tempTerm;
-	bool	isImaginary;
-	int		unknownCount = 0;
-	string	unknownVar;
+	int			index = -1;
+	int			len = (int)equation->counter;
+	term		*tempTerm;
+	bool		isImaginary;
+	int			unknownCount = 0;
+	string		unknownVar;
+	Instruction	*savedInstruction;
+	Instruction	*savedInstruction1;
 
 	unknownVar = "";
+	savedInstruction = NULL;
 	while (++index < len) {
 		isImaginary = false;
 		if (equation->getTerm(index)->isVar()) {
-			if (instructions.findInstruction(equation->getTerm(index)->getVariable()) == NULL) {
+			if ((savedInstruction = instructions.findInstruction(equation->getTerm(index)->getVariable())) == NULL) {
 				if (equation->getTerm(index)->getVariable().compare("i")) {
 					if (unknownCount >= 1) {
 						if (equation->getTerm(index)->getVariable().compare(unknownVar)) {
@@ -411,12 +417,36 @@ bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
 					isImaginary = true;
 				}
 			}
-			if (!isImaginary && unknownVar.compare(equation->getTerm(index)->getVariable())) {
+			if (!isImaginary && unknownVar.compare(equation->getTerm(index)->getVariable()) && savedInstruction != NULL) {
 				tempTerm = equation->getTerm(index);
-				tempTerm->replaceVariable(instructions.findInstruction(tempTerm->getVariable())->getfloatValue());
+				if (savedInstruction != NULL) {
+					if (savedInstruction->getType() == VARIABLE) {
+						cout << "Instruction type :: VARIABLE" << endl;
+						tempTerm->replaceVariable(instructions.findInstruction(tempTerm->getVariable())->getfloatValue());
+					}
+					else if (savedInstruction->getType() == FUNCTION) {
+						cout << "Instruction type :: FUNCTION" << endl;
+						cout << "Variable name :: " << equation->getTerm(index)->getVariable() << endl;
+						cout << "Parameter :: " << instructions.getVariableName(equation->getTerm(index)->getVariable()) << endl;
+						if (this->isNumeric(instructions.getVariableName(equation->getTerm(index)->getVariable()))) {
+							tempTerm->replaceVariable(savedInstruction->getFunction()->getFunctionValue(atof(instructions.getVariableName(equation->getTerm(index)->getVariable()).c_str())));
+						}
+						else {
+							if ((savedInstruction1 = instructions.findInstruction(instructions.getVariableName(equation->getTerm(index)->getVariable()))) == NULL) {
+								return (false);
+							}
+							if (savedInstruction1->getType() != VARIABLE) {
+								return (false);
+							}
+							// tempTerm->replaceVariable(savedInstruction->getfloatValue());
+							tempTerm->replaceVariable(savedInstruction->getFunction()->getFunctionValue(savedInstruction1->getfloatValue()));
+						}
+					}
+				}
 			}
 		}
 	}
+	equation->showAll();
 	return (true);
 }
 
@@ -431,7 +461,7 @@ bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction 
 		cout << "String :: " << correctStrings.at(i) << endl;
 	}
 	addexpression(equation);
-	equation->showAll();
+	// equation->showAll();
 	return (checkVariables(equation, instructions));
 }
 
