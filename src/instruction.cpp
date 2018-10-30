@@ -53,10 +53,11 @@ bool    Instruction::setEquation(string rhs_string) {
         return (false);
     }
     // equation->showAll();
+    // cout << "see equation before calculating" << endl;
     equation->calculate();
     // equation->showAll();
     // cout << "Counter : " << equation->counter << endl;
-    if (equation->counter == 1 && !equation->isFunction()) {
+    if (equation->getMaxTerms() == 1 && !equation->isFunction()) {
         tempInstruction = new Instruction();
         tempInstruction->setInstruction(equation->getEquationType());
         if (equation->getEquationType() == VARIABLE || equation->getEquationType() == FUNCTION) {
@@ -116,11 +117,9 @@ bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
         return (true);
     }
     else if (Validate::isValidVariable(rhs.at(0), false)) {
-        // cout << "Found variable" << endl;
         return (this->setEquation(rhs_string));
     }
     else if (validator.foundOperator(rhs.at(0)) || validator.foundMixedTerm(rhs.at(0))) {
-        // cout << "Mixed term found : " << rhs.at(0) << endl;
         return (this->setEquation(rhs_string));
     }
     else if (Matrix::isValidMatrix(rhs_string)) {

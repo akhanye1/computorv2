@@ -51,5 +51,9 @@ class polynomial {
         string          toEquation();
         string          getFunctionVariable() const;
         int             getMaxTerms() const;
+        polynomial      *makeCopy();
+        void            setEquationType(int equationType);
+        void            setPriority(int priority);
+        int             getPriority();
 };
 #endif

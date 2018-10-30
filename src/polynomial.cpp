@@ -116,7 +116,7 @@ void    polynomial::solveExponents(int start) {
     float   number;
     int     exponent;
     int     maxTerms;
-    
+
     maxTerms = this->getMaxTerms();
     while (start < maxTerms) {
         if (this->terms.at(start).getConstant() == 0 && this->terms.at(start).isVar()) {
@@ -218,14 +218,19 @@ void    polynomial::bodmasRule(int start) {
     solveByOrder(start + 1, '-');
     solveExponents(start);
     simplifyBracket(start);
-    // showAll();
+    //
     if (this->priorityLevel > 0) {
         this->priorityLevel--;
         return (bodmasRule(start));
     }
+    cout << "NUMTIMES NUMTIMES NUMTIMES" << numTimes << endl;
+    showAll();
     if (numTimes == 0) {
         numTimes++;
         return (bodmasRule(start));
+    }
+    else {
+        numTimes = 0;
     }
 }
 
@@ -588,15 +593,21 @@ string  polynomial::getFunctionVariable() const {
 }
 
 void    polynomial::calculate() {
-    bool isImaginery = this->isImaginary();
-    bool isFunction = this->isFunction();
+    // bool isImaginery = this->isImaginary();
+    // bool isFunction = this->isFunction();
     this->priorityLevel = term::getMaxPriorityLevel();
     bodmasRule(0);
-    // cout << "After bodmas rule" << endl;
-    // showAll();
-    if (!isImaginery && !isFunction) {
+    if (!this->isFunction() && !this->isImaginary()) {
+        cout << "Is variable" << endl;
         this->equationType = VARIABLE;
     }
+    showAll();
+    cout << "Is function : " << this->isFunction() << " | is imaginery : " << this->isImaginary() << endl;
+    // cout << "After bodmas rule" << endl;
+    // showAll();
+    // if (!isImaginery && !isFunction) {
+    //     this->equationType = VARIABLE;
+    // }
 }
 
 
@@ -630,4 +641,33 @@ string  polynomial::toEquation() {
 
 int     polynomial::getMaxTerms() const {
     return ((int)this->terms.size());
+}
+
+polynomial  *polynomial::makeCopy() {
+    polynomial  *copy = new polynomial();
+    int         maxTerms = getMaxTerms();
+
+    for (int i = 0; i < maxTerms; i++) {
+        term tempTerm;
+        tempTerm = *this->getTerm(i);
+        copy->addTerm(&tempTerm);
+    }
+    if (this->debug) {
+        copy->debugOn();
+    }
+    copy->setEquationType(this->getEquationType());
+    copy->setPriority(this->getPriority());
+    return (copy);
+}
+
+void    polynomial::setEquationType(int equationType) {
+    this->equationType = equationType;
+}
+
+void    polynomial::setPriority(int priority) {
+    this->priorityLevel = priority;
+}
+
+int     polynomial::getPriority() {
+    return this->priorityLevel;
 }
