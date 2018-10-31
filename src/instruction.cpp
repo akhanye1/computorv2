@@ -70,13 +70,13 @@ bool    Instruction::setEquation(string rhs_string) {
         }
         return (true);
     }
-    else if (equation->isImaginary() && equation->counter > 0) {
+    else if (equation->isImaginary() && equation->getMaxTerms() > 0) {
         tempInstruction = new Instruction();
         tempInstruction->setCommand(equation->toEquation());
         tempInstruction->setInstruction(IMAGINERY);
         return (true);
     }
-    else if (equation->isFunction() && equation->counter > 0) {
+    else if (equation->isFunction() && equation->getMaxTerms() > 0) {
         return (this->setupFunction(equation));
     } 
     return (false);

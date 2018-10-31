@@ -3,9 +3,10 @@
 bool	setValue(polynomial *equation, term oneTerm, int index) {
 	int		i;
 	term	tempTerm;
+	int		maxTerms = equation->getMaxTerms();
 
 	i = -1;
-	while (++i < equation->counter) {
+	while (++i < maxTerms) {
 		tempTerm = *equation->getTerm(i);
 		if (tempTerm.getSide() > 0) {
 			equation->changeSide(oneTerm, index);
@@ -26,11 +27,12 @@ bool	reducedOk(polynomial *equation) {
 	int		index;
 	term	oneTerm;
 	int		maxRight;
+	int		maxTerms = equation->getMaxTerms();
 
 	index = -1;
 	equation->simplifyRight();
 	index = -1;
-	while (++index < equation->counter) {
+	while (++index < maxTerms) {
 		oneTerm = *equation->getTerm(index);
 		if (oneTerm.getSide() > 0) {
 			setValue(equation, oneTerm, index);
@@ -39,7 +41,7 @@ bool	reducedOk(polynomial *equation) {
 	}
 	maxRight = 0;
 	index = -1;
-	while (++index < equation->counter) {
+	while (++index < maxTerms) {
 		if (equation->getTerm(index)->getSide() > 0) {
 			maxRight++;
 		}
@@ -57,10 +59,11 @@ int		polynomialDegree(polynomial *equation) {
 	int		len;
 	term	oneTerm;
 	int		polDegree;
+	int		maxTerms = equation->getMaxTerms();
 
 	len = -1;
 	polDegree = 1;
-	while (++len < equation->counter) {
+	while (++len < maxTerms) {
 		oneTerm = *equation->getTerm(len);
 		if (oneTerm.getSide() > 0) {
 			return (polDegree);

@@ -31,7 +31,6 @@ class polynomial {
         term            *getTerm(int index);
         void            moveLeft(term tempTerm, int changeIndex, int removeIndex);
         void            changeSide(term tempTerm, int index);
-        static int      counter;
         void            showReduced();
         void            simplifyRight();
         void            showAll();
@@ -44,7 +43,7 @@ class polynomial {
         void            multiplyVariables();
         void            debugOn();
         bool            isDebug();
-        void            calculate();
+        bool            calculate();
         int             getEquationType() const;
         bool            isImaginary();
         bool            isFunction();

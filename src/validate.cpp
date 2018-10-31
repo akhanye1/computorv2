@@ -316,7 +316,7 @@ void	Validate::addexpression(polynomial *equation) {
 
 bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
 	int			index = -1;
-	int			len = (int)equation->counter;
+	int			len = equation->getMaxTerms();
 	term		*tempTerm;
 	bool		isImaginary;
 	int			unknownCount = 0;
@@ -347,13 +347,13 @@ bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
 				tempTerm = equation->getTerm(index);
 				if (savedInstruction != NULL) {
 					if (savedInstruction->getType() == VARIABLE) {
-						cout << "Instruction type :: VARIABLE" << endl;
+						// cout << "Instruction type :: VARIABLE" << endl;
 						tempTerm->replaceVariable(instructions.findInstruction(tempTerm->getVariable())->getfloatValue());
 					}
 					else if (savedInstruction->getType() == FUNCTION) {
-						cout << "Instruction type :: FUNCTION" << endl;
-						cout << "Variable name :: " << equation->getTerm(index)->getVariable() << endl;
-						cout << "Parameter :: " << instructions.getVariableName(equation->getTerm(index)->getVariable()) << endl;
+						// cout << "Instruction type :: FUNCTION" << endl;
+						// cout << "Variable name :: " << equation->getTerm(index)->getVariable() << endl;
+						// cout << "Parameter :: " << instructions.getVariableName(equation->getTerm(index)->getVariable()) << endl;
 						if (this->isNumeric(instructions.getVariableName(equation->getTerm(index)->getVariable()))) {
 							tempTerm->replaceVariable(savedInstruction->getFunction()->getFunctionValue(atof(instructions.getVariableName(equation->getTerm(index)->getVariable()).c_str())));
 						}
@@ -372,7 +372,7 @@ bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
 			}
 		}
 	}
-	equation->showAll();
+	// equation->showAll();
 	return (true);
 }
 
@@ -383,9 +383,9 @@ bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction 
 	}
 	splitString(poly);
 	correctSplit();
-	for (size_t i = 0; i < correctStrings.size(); i++) {
-		cout << "String :: " << correctStrings.at(i) << endl;
-	}
+	// for (size_t i = 0; i < correctStrings.size(); i++) {
+	// 	cout << "String :: " << correctStrings.at(i) << endl;
+	// }
 	addexpression(equation);
 	// equation->showAll();
 	return (checkVariables(equation, instructions));

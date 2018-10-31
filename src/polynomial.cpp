@@ -1,11 +1,9 @@
 #include "../computorv.h"
 
-int polynomial::counter = 0;
 bool polynomial::debug = false;
 
 bool    polynomial::addTerm(term *termVal) {
     this->terms.push_back(*termVal);
-    polynomial::counter++;
     return (true);
 }
 
@@ -48,13 +46,13 @@ void        polynomial::moveLeft(term tempTerm, int changeIndex, int removeIndex
                 this->terms.at(changeIndex).setConstant(tempValue);
             }
     }
-    polynomial::counter--;
 }
 
 void        polynomial::toString(void) {
     term oneTerm;
+    int     maxTerms = this->getMaxTerms();
 
-    for (int x = 0; x < polynomial::counter; x++) {
+    for (int x = 0; x < maxTerms; x++) {
         oneTerm = this->terms.at(x);
         oneTerm.toString();
     }
@@ -62,7 +60,8 @@ void        polynomial::toString(void) {
 
 void        polynomial::showReduced(void) {
     cout << "Reduced from : ";
-    for (int x = 0; x < polynomial::counter; x++) {
+    int maxTerms = this->getMaxTerms();
+    for (int x = 0; x < maxTerms; x++) {
         if (x > 0 || (x == 0 && this->terms.at(x).getOperand() == '-')) {
             cout << this->terms.at(x).getOperand() << " ";
         }
@@ -87,14 +86,14 @@ void        polynomial::showReduced(void) {
 }
 
 polynomial::polynomial(void) {
-    polynomial::counter = 0;
 }
 
 void    polynomial::simplifyRight() {
     int     index = -1;
+    int     maxTerms = this->getMaxTerms();
 
-    while (++index < counter && this->terms.at(index).getSide() == 0);
-    if (index == counter) {
+    while (++index < maxTerms && this->terms.at(index).getSide() == 0);
+    if (index == maxTerms) {
         return;
     }
     bodmasRule(index);
@@ -121,7 +120,7 @@ void    polynomial::solveExponents(int start) {
     while (start < maxTerms) {
         if (this->terms.at(start).getConstant() == 0 && this->terms.at(start).isVar()) {
             this->terms.erase(this->terms.begin() + start);
-            counter--;
+            maxTerms = this->getMaxTerms();
             return (solveExponents(start));
         }
         if (this->terms.at(start).isExp()) {
@@ -153,6 +152,7 @@ void    polynomial::solveByOrder(int start, char check) {
                 this->terms.at(start - 1).getOrder() == this->priorityLevel) {
             if (this->terms.at(start - 1).addTerm(this->terms.at(start))) {
                 moveLeft(this->terms.at(start - 1), start - 1, start);
+                maxTerms = this->getMaxTerms();
                 return (solveByOrder(start, check));
             }
         }
@@ -223,7 +223,7 @@ void    polynomial::bodmasRule(int start) {
         this->priorityLevel--;
         return (bodmasRule(start));
     }
-    cout << "NUMTIMES NUMTIMES NUMTIMES" << numTimes << endl;
+    // cout << "NUMTIMES NUMTIMES NUMTIMES" << numTimes << endl;
     showAll();
     if (numTimes == 0) {
         numTimes++;
@@ -265,7 +265,7 @@ void    polynomial::solveExpression() {
     float   tempVal;
 
     rightTerm = varTerm = NULL;
-    if (this->counter == 1) {
+    if (this->getMaxTerms() == 1) {
         this->addTerm(getEmptyTerm());
     }
     if (this->terms.at(0).isVar()) {
@@ -328,11 +328,12 @@ void    printTerm(term printTerm) {
 void    polynomial::showExpression(string explainLine) {
     int     index = -1;
     int     foundRight = false;
+    int     maxTerms = this->getMaxTerms();
 
     if (!debug) {
         return ;
     }
-    while (++index < counter) {
+    while (++index < maxTerms) {
         if (this->terms.at(index).getSide() == 0) {
             printTerm(this->terms.at(index));
         }
@@ -352,7 +353,7 @@ void    polynomial::showExpression(string explainLine) {
     }
     cout << " = ";
     index = -1;
-    while (++index < counter) {
+    while (++index < maxTerms) {
         if (this->terms.at(index).getSide() == 1) {
             printTerm(this->terms.at(index));
         }
@@ -367,23 +368,26 @@ void    polynomial::showExpression(string explainLine) {
 
 void    polynomial::addRemaining(int index) {
     int i;
+    int maxTerms = this->getMaxTerms();
 
     i = index;
-    while (++i < counter) {
+    while (++i < maxTerms) {
         if (this->terms.at(index).sameAs(this->terms.at(i))) {
             this->terms.at(index).addTerm(this->terms.at(i));
             moveLeft(this->terms.at(index), index, i);
+            maxTerms = this->getMaxTerms();
             return (addRemaining(index));
         }
     }
-    if (index < counter) {
+    if (index < maxTerms) {
         return (addRemaining(index + 1));
     }
 }
 
 float   polynomial::getA() {
     int index = -1;
-    while (++index < counter) {
+    int maxTerms = this->getMaxTerms();
+    while (++index < maxTerms) {
         if (this->terms.at(index).isExp() && this->terms.at(index).getExponent() == 2) {
             return (this->terms.at(index).getCorrectValue());
         }
@@ -393,7 +397,8 @@ float   polynomial::getA() {
 
 float   polynomial::getB() {
     int index = -1;
-    while (++index < counter) {
+    int maxTerms = this->getMaxTerms();
+    while (++index < maxTerms) {
         if (this->terms.at(index).isExp() && this->terms.at(index).isVar() && this->terms.at(index).getExponent() == 1) {
             return (this->terms.at(index).getCorrectValue());
         }
@@ -403,7 +408,8 @@ float   polynomial::getB() {
 
 float   polynomial::getC() {
     int index = -1;
-    while (++index < counter) {
+    int maxTerms = this->getMaxTerms();
+    while (++index < maxTerms) {
         if (!this->terms.at(index).isVar()) {
             return (this->terms.at(index).getCorrectValue());
         }
@@ -466,7 +472,7 @@ void    polynomial::solveSquareRoot() {
     float   tempVal;
 
     varTerm = rightTerm = NULL;
-    if (counter == 1) {
+    if (this->getMaxTerms() == 1) {
         this->addTerm(getEmptyTerm());
     }
     if (this->terms.at(0).isVar()) {
@@ -526,26 +532,29 @@ void    polynomial::solveQuadradic() {
 
 void    polynomial::multiplyVariables() {
     int     index = 0;
+    int     maxTerms = this->getMaxTerms();
 
-    while (++index < counter) {
+    while (++index < maxTerms) {
         if (this->terms.at(index).getSide() == 0 && this->terms.at(index).isVar()) {
             if (this->terms.at(index).getOperand() == '*' ||
             this->terms.at(index).getOperand() == '/') {
                 if (this->terms.at(index - 1).addTerm(this->terms.at(index))) {
                     moveLeft(this->terms.at(index - 1), index - 1, index);
+                    maxTerms = this->getMaxTerms();
                     return (multiplyVariables());
                 }
             }
         }
     }
     index = 0;
-    while (++index < counter) {
+    while (++index < maxTerms) {
         if (this->terms.at(index).getSide() == 1 && this->terms.at(index).isVar() &&
         this->terms.at(index - 1).getSide() == 1) {
             if (this->terms.at(index).getOperand() == '*' ||
             this->terms.at(index).getOperand() == '/') {
                 if (this->terms.at(index - 1).addTerm(this->terms.at(index))) {
                     moveLeft(this->terms.at(index - 1), index - 1, index);
+                    maxTerms = this->getMaxTerms();
                     return (multiplyVariables());
                 }
             }
@@ -592,22 +601,16 @@ string  polynomial::getFunctionVariable() const {
     return ("");
 }
 
-void    polynomial::calculate() {
-    // bool isImaginery = this->isImaginary();
-    // bool isFunction = this->isFunction();
+bool    polynomial::calculate() {
     this->priorityLevel = term::getMaxPriorityLevel();
     bodmasRule(0);
     if (!this->isFunction() && !this->isImaginary()) {
-        cout << "Is variable" << endl;
+        if (this->getMaxTerms() != 1) {
+            return (false);
+        }
         this->equationType = VARIABLE;
     }
-    showAll();
-    cout << "Is function : " << this->isFunction() << " | is imaginery : " << this->isImaginary() << endl;
-    // cout << "After bodmas rule" << endl;
-    // showAll();
-    // if (!isImaginery && !isFunction) {
-    //     this->equationType = VARIABLE;
-    // }
+    return (true);
 }
 
 
@@ -618,8 +621,9 @@ int     polynomial::getEquationType() const {
 string  polynomial::toEquation() {
     stringstream    ss;
     string          tempString;
+    int             maxTerms = this->getMaxTerms();
 
-    for (int i = 0; i < counter; i++) {
+    for (int i = 0; i < maxTerms; i++) {
         if (i > 0) {
             ss << this->terms.at(i).getOperand() << " ";
         }
