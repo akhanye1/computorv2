@@ -30,7 +30,6 @@ Instruction& Instruction::operator=(Instruction const &rhs) {
 }
 
 bool    Instruction::setupFunction(polynomial *equation) {
-    tempInstruction = new Instruction();
     Functions *function = new Functions();
     
     function->setVariableName(equation->getFunctionVariable());
@@ -55,30 +54,40 @@ bool    Instruction::setEquation(string rhs_string) {
     // equation->showAll();
     // cout << "see equation before calculating" << endl;
     equation->calculate();
+    cout << "Equation Type :: " << equation->getEquationType() << " | tempInstruction type :: " << tempInstruction->getType() << endl;
+    if (tempInstruction->getType() == VARIABLE) {
+        if (equation->getEquationType() != VARIABLE && equation->getEquationType() != MATRIX &&
+            equation->getEquationType() != IMAGINERY) {
+                cout << "<<>> Exited here" << endl;
+            return (false);
+        }
+    }
+    else if (tempInstruction->getType() != equation->getEquationType()) {
+        return (false);
+    }
+    tempInstruction->setInstruction(equation->getEquationType());
     // equation->showAll();
     // cout << "Counter : " << equation->counter << endl;
-    if (equation->getMaxTerms() == 1 && !equation->isFunction()) {
-        tempInstruction = new Instruction();
-        tempInstruction->setInstruction(equation->getEquationType());
-        if (equation->getEquationType() == VARIABLE || equation->getEquationType() == FUNCTION) {
-            tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
-            // cout << "first if statement" << endl;
-        }
-        else {
-            tempInstruction->setCommand(rhs_string);
-            // cout << "second if statement" << endl;
-        }
+    if (equation->getMaxTerms() == 1 && equation->getEquationType() == VARIABLE) {
+        tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
+        // if (equation->getEquationType() == VARIABLE || equation->getEquationType() == FUNCTION) {
+            
+        //     // cout << "first if statement" << endl;
+        // }
+        // else {
+        //     tempInstruction->setCommand(rhs_string);
+        //     // cout << "second if statement" << endl;
+        // }
         return (true);
     }
     else if (equation->isImaginary() && equation->getMaxTerms() > 0) {
-        tempInstruction = new Instruction();
         tempInstruction->setCommand(equation->toEquation());
         tempInstruction->setInstruction(IMAGINERY);
         return (true);
     }
     else if (equation->isFunction() && equation->getMaxTerms() > 0) {
         return (this->setupFunction(equation));
-    } 
+    }
     return (false);
 }
 
@@ -87,7 +96,6 @@ bool    Instruction::setupMatrix(string rhs_string) {
 
     if (matrix->matrixOk()) {
         cout << "matrix valid" << endl;
-        tempInstruction = new Instruction();
         tempInstruction->setMatrix(matrix);
         tempInstruction->setInstruction(MATRIX);
         return (true);
@@ -100,26 +108,21 @@ bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
     Validate validator;
 
     if (!rhs.at(0).compare("i") || !rhs.at(0).compare("I")) {
-        tempInstruction = new Instruction();
         tempInstruction->setInstruction(IMAGINERY);
         tempInstruction->setCommand("i");
         return (true);
     }
     else if (Validate::isNumeric(rhs.at(0))) {
-        tempInstruction = new Instruction();
         tempInstruction->setInstruction(VARIABLE);
         tempInstruction->setFloatValue(atof(rhs.at(0).c_str()));
         return (true);
     }
     else if (!rhs.at(0).compare("?")) {
-        tempInstruction = new Instruction();
         this->isPrint = true;
         return (true);
     }
-    else if (Validate::isValidVariable(rhs.at(0), false)) {
-        return (this->setEquation(rhs_string));
-    }
-    else if (validator.foundOperator(rhs.at(0)) || validator.foundMixedTerm(rhs.at(0))) {
+    else if (Validate::isValidVariable(rhs.at(0), false) || validator.foundOperator(rhs.at(0)) || 
+        validator.foundMixedTerm(rhs.at(0))) {
         return (this->setEquation(rhs_string));
     }
     else if (Matrix::isValidMatrix(rhs_string)) {
@@ -131,7 +134,6 @@ bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
 
 bool    Instruction::checkOneFunctionValue(string rhs_string) {
     if (rhs_string.compare("?")) {
-        tempInstruction = new Instruction();
         this->isPrint = true;
         return (true);
     }
@@ -147,8 +149,10 @@ bool    Instruction::checkRightHandSide(vector<string> rhs, bool isFunction, str
     }
     cout << "Function identified" << endl;
     if (rhs.size() == 1) {
+        cout << "RHS is 1" << endl;
         return (this->checkOneFunctionValue(rhs_str));
     }
+    cout << "Finding more instruction" << endl;
     return (this->setEquation(rhs_str));
 }
 
@@ -167,14 +171,13 @@ bool    Instruction::prepareForPrint(string str) {
 }
 
 bool    Instruction::setVariableData(vector<string> rightInstructions, string str, string rhs) {
-    tempInstruction = NULL;
+    tempInstruction = new Instruction();
+    tempInstruction->setInstruction(VARIABLE);
+
     if (!this->checkRightHandSide(rightInstructions, false, rhs)) {
         return (false);
     }
-    if (tempInstruction == NULL) {
-        return (false);
-    }
-    else if (this->isPrint) {
+    if (this->isPrint) {
         return (prepareForPrint(str));
     }
     tempInstruction->setInstructionHead(str);
@@ -207,11 +210,15 @@ Functions   *Instruction::getFunction() {
 }
 
 bool    Instruction::setFunctionData(vector<string> rhs_array, string str, string rhs_string) {
-    tempInstruction = NULL;
+    tempInstruction = new Instruction();
+    tempInstruction->setInstruction(FUNCTION);
     string              variableName;
 
     if (str.compare("?")) {
         
+    }
+    if (Matrix::isValidMatrix(rhs_string)) {
+        return (false);
     }
     if (!this->checkRightHandSide(rhs_array, true, rhs_string)) {
         return (false);
