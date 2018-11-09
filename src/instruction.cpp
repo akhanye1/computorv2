@@ -6,6 +6,7 @@ Instruction::Instruction() {
     this->valid = false;
     this->matrix = NULL;
     this->function = NULL;
+    this->viewOnly = false;
 }
 
 Instruction::Instruction(string str) {
@@ -13,6 +14,7 @@ Instruction::Instruction(string str) {
     this->function = NULL;
     this->splitString(str, '=', this->commands);
     this->isPrint = false;
+    this->viewOnly = false;
     if (this->commands.size() != 2) {
         this->valid = false;
         return ;
@@ -78,11 +80,17 @@ bool    Instruction::setEquation(string rhs_string) {
         //     tempInstruction->setCommand(rhs_string);
         //     // cout << "second if statement" << endl;
         // }
+        if (this->viewOnly) {
+            cout << equation->getTerm(0)->getCorrectValue() << endl;
+        }
         return (true);
     }
     else if (equation->isImaginary() && equation->getMaxTerms() > 0) {
         tempInstruction->setCommand(equation->toEquation());
         tempInstruction->setInstruction(IMAGINERY);
+        if (this->viewOnly) {
+            cout << equation->toEquation() << endl;
+        }
         return (true);
     }
     else if (equation->isFunction() && equation->getMaxTerms() > 0) {
@@ -238,28 +246,38 @@ bool    Instruction::setFunctionData(vector<string> rhs_array, string str, strin
     return (true);
 }
 
+bool    Instruction::showEquationValue(string str) {
+    tempInstruction = new Instruction();
+
+    tempInstruction->setInstruction(VARIABLE);
+    cout << "String value :: " << str << endl;
+    return (this->setEquation(str));
+}
+
 bool    Instruction::verifyInstruction() {
     vector<string>  leftInstructions;
     vector<string>  rightInstructions;
-    string          str;
 
     splitString(commands.at(0), ' ', leftInstructions);
     splitString(commands.at(1), ' ', rightInstructions);
     if (leftInstructions.size() == 1) {
-        str = leftInstructions.at(0);
-        if (!Validate::isValidVariable(str, true) && !Validate::isValidFunction(str)) {
+        cout << "Left" << endl;
+        if (!Validate::isValidVariable(leftInstructions.at(0), true) &&
+            !Validate::isValidFunction(leftInstructions.at(0))) {
             return (false);
         }
-        if (Validate::isValidVariable(str, true)) {
-            return (setVariableData(rightInstructions, str, commands.at(1)));
+        if (Validate::isValidVariable(leftInstructions.at(0), true)) {
+            return (setVariableData(rightInstructions, leftInstructions.at(0), commands.at(1)));
         }
-        else if (Validate::isValidFunction(str)) {
-            return (setFunctionData(rightInstructions, str, commands.at(1)));
+        else if (Validate::isValidFunction(leftInstructions.at(0))) {
+            return (setFunctionData(rightInstructions, leftInstructions.at(0), commands.at(1)));
         }
     }
     else if (rightInstructions.size() == 1) {
-        if (rightInstructions.at(0).compare("?")) {
-            return (false);
+        cout << "Right" << endl; 
+        if (!rightInstructions.at(0).compare("?")) {
+            this->viewOnly = true;
+            return (showEquationValue(commands.at(0)));
         }
     }
     return (true);
@@ -291,6 +309,9 @@ void	Instruction::splitString(string poly, char deliminator, vector<string> &tem
 	string  temp;
 	size_t  pos;
 
+    while ((pos = poly.find("\t")) != string::npos) {
+		poly[pos] = ' ';
+	}
 	while ((pos = poly.find(deliminator)) != string::npos) {
         temp = Validate::trimString(poly.substr(0, pos));
 		poly = poly.substr(pos + 1);
@@ -384,4 +405,8 @@ Matrix      *Instruction::getMatrix() {
 
 void        Instruction::setMatrix(Matrix *tempMatrix) {
     this->matrix = tempMatrix;
+}
+
+bool        Instruction::isViewOnly() const {
+    return this->viewOnly;
 }

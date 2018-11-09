@@ -604,7 +604,7 @@ string  polynomial::getFunctionVariable() const {
 bool    polynomial::calculate() {
     this->priorityLevel = term::getMaxPriorityLevel();
     bodmasRule(0);
-    if (!this->isFunction() && !this->isImaginary()) {
+    if (!this->isImaginary() && !this->isFunction()) {
         if (this->getMaxTerms() != 1) {
             return (false);
         }

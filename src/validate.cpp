@@ -29,6 +29,9 @@ void	Validate::splitString(string poly) {
 	string	temp;
 	size_t	pos;
 
+	while ((pos = poly.find("\t")) != string::npos) {
+		poly[pos] = ' ';
+	}
 	while ((pos = poly.find(" ")) != string::npos) {
 		temp = poly.substr(0, pos);
 		poly = poly.substr(pos + 1);
@@ -53,6 +56,12 @@ bool	Validate::checkPolynomialAuthentacity() {
 		return (false);
 	if (correctStrings[0][0] == '^')
 		return (false);
+	if (isOperand(correctStrings[correctStrings.size() - 1])) {
+		return (false);
+	}
+	if (isOperandCharector(correctStrings[correctStrings.size() - 1])) {
+		return (false);
+	}
 	while (++index < ((int)correctStrings.size() - 1)) {
 		if (correctStrings[index][0] == '^' || correctStrings[index][correctStrings[index].length() - 1] == '^')
 			return (false);
@@ -386,6 +395,9 @@ bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction 
 	// for (size_t i = 0; i < correctStrings.size(); i++) {
 	// 	cout << "String :: " << correctStrings.at(i) << endl;
 	// }
+	if (!this->checkPolynomialAuthentacity()) {
+		return (false);
+	}
 	addexpression(equation);
 	// equation->showAll();
 	return (checkVariables(equation, instructions));
@@ -479,7 +491,7 @@ bool	Validate::bracketsOk(string str) {
 			compareClose.push_back(')');
 		}
 		else if (str[i] == ']' || str[i] == ')') {
-			if (compareClose.at(compareClose.size() - 1) != str[i]) {
+			if (compareClose.size() > 0 && compareClose.at(compareClose.size() - 1) != str[i]) {
 				return (false);
 			}
 			compareClose.erase(compareClose.end() - 1);
