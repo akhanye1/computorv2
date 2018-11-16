@@ -174,7 +174,6 @@ int     polynomial::getPriorityIndex(int start) {
 
 void    polynomial::simplifyBracket(int start) {
     int     times = 0;
-    // float   tempValue;
     int     index;
     int     startIndex = start;
     int     maxTerms = this->terms.size();
@@ -185,24 +184,27 @@ void    polynomial::simplifyBracket(int start) {
         }
         start++;
     }
-    // cout << "Times :: " << times << endl;
-    if (times == 1 && maxTerms > 1) {
+    // this->showAll();
+    cout << "Times :: " << times;
+    cout << " | Max times :: " << maxTerms;
+    cout << " | Priority level :: " << this->priorityLevel << endl;
+    if (times > 0 && this->priorityLevel > 0) {
         if ((index = getPriorityIndex(startIndex)) == -1) {
-            // cout << "Index is -1" << endl;
             return ;
         }
+
         this->getTerm(index)->setOrder(this->priorityLevel - 1);
         // cout << "Index :: " << index << endl;
         if (this->getTerm(index)->isAfterBracket()) {
             this->getTerm(index)->setConstant(this->getTerm(index)->getCorrectValue());
             this->getTerm(index)->setOperand(this->getTerm(index)->getBracketOperator());
         }
-        // if (this->terms.at(index - 1).addTerm(this->terms.at(index))) {
-        //     moveLeft(this->terms.at(index - 1), index - 1, index);
-        // }
+        else {
+            cout << "Not implemented yet:: polynomial.cpp line 204" << endl;
+        }
     }
     else {
-        cout << "Still to be implemented" << endl;
+        cout << "Still to be implemented (Nothing to be implemented)::polynomial.cpp line 211" << endl;
     }
 }
 
@@ -218,13 +220,14 @@ void    polynomial::bodmasRule(int start) {
     solveByOrder(start + 1, '-');
     solveExponents(start);
     simplifyBracket(start);
+    // this->showAll();
     //
     if (this->priorityLevel > 0) {
         this->priorityLevel--;
         return (bodmasRule(start));
     }
     // cout << "NUMTIMES NUMTIMES NUMTIMES" << numTimes << endl;
-    showAll();
+    // showAll();
     if (numTimes == 0) {
         numTimes++;
         return (bodmasRule(start));

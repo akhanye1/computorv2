@@ -255,7 +255,7 @@ bool    term::addTerm(term addTerm) {
     if (addTerm.getOperand() == '+' || addTerm.getOperand() == '-') {
         if (this->sameAs(addTerm)) {            
             tempSum = temp1 + temp2;
-            cout << "temp1 (" << temp1 << ") + temp2 (" << temp2 << ") = " << tempSum << endl;
+            // cout << "temp1 (" << temp1 << ") + temp2 (" << temp2 << ") = " << tempSum << endl;
             if (tempSum < 0) {
                 this->setOperand('-');
                 tempSum *= -1;
@@ -370,4 +370,9 @@ void    term::setOrder(int tempOrder) {
 
 int     term::getMaxPriorityLevel() {
     return (maxPriority);
+}
+
+void    term::resetPriority() {
+    priorityLevel = 0;
+    maxPriority = 0;
 }

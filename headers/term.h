@@ -61,5 +61,6 @@ class term {
         char    getBracketOperator() const;
         static int     getMaxPriorityLevel();
         void    setOrder(int order);
+        static void    resetPriority();
 };
 #endif

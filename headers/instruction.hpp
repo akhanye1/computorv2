@@ -34,6 +34,8 @@ class Instruction {
         bool                        setupFunction(polynomial *equation);
         string                      getFunctionName(string str);
         bool                        showEquationValue(string str);
+        bool                        sortRightHand(vector<string> lefthnd, vector<string> righthnd);
+        bool                        sortLeftHand(vector<string> rhs);
 
 
     public:
@@ -55,7 +57,7 @@ class Instruction {
         void                        setInstructionData(Instruction data);
         string                      getCommand() const;
         bool                        printValue() const;
-        void                        showAllInstructions();
+        static void                 showAllInstructions();
         static void                 splitString(string str, char deliminator, vector<string> &tempVector);
         Matrix                      *getMatrix();
         void                        setMatrix(Matrix *matrix);

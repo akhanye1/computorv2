@@ -7,6 +7,9 @@ class   Instruction;
 
 class	Validate {
     private:
+        string          unknownVar;
+        int             unknownCount;
+        bool            isImaginary;
         void            splitString(string poly);
         void            correctSplit();
         int             lastIndexOfAlpha(string str);
@@ -24,6 +27,18 @@ class	Validate {
         static char     oneVar;
         bool            sameVariables(char *poly);
         bool            checkVariables(polynomial *equation, Instruction instruction);
+        bool            varIsOkay(polynomial *equation, Instruction instruction, int index);
+        bool            foundUnknown(polynomial *equation, int index);
+        bool            replaceFunctionVar(polynomial *equation, Instruction instructions,
+                                int index, term *tempTerm, Instruction *tempInstructions);
+        int             findNextOperand(int index);
+        bool            isNextOperand(string ch);
+        int             addTermForOperand(polynomial *equation, int index, int termSide);
+        int             addTermForOpenBracket(polynomial *equation, int index, int termSide,
+                            string bracketOperand);
+        int             addTermForClosingBracket(polynomial *equation, int index, int termSide);
+        bool            isValidExpression(int index);
+        bool            isExponentCorrect();
 
 	public:
         Validate(void);

@@ -56,7 +56,7 @@ bool    Instruction::setEquation(string rhs_string) {
     // equation->showAll();
     // cout << "see equation before calculating" << endl;
     equation->calculate();
-    cout << "Equation Type :: " << equation->getEquationType() << " | tempInstruction type :: " << tempInstruction->getType() << endl;
+    // cout << "Equation Type :: " << equation->getEquationType() << " | tempInstruction type :: " << tempInstruction->getType() << endl;
     if (tempInstruction->getType() == VARIABLE) {
         if (equation->getEquationType() != VARIABLE && equation->getEquationType() != MATRIX &&
             equation->getEquationType() != IMAGINERY) {
@@ -129,23 +129,29 @@ bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
         this->isPrint = true;
         return (true);
     }
-    else if (Validate::isValidVariable(rhs.at(0), false) || validator.foundOperator(rhs.at(0)) || 
-        validator.foundMixedTerm(rhs.at(0))) {
-        return (this->setEquation(rhs_string));
-    }
+    // else if (Validate::isValidVariable(rhs.at(0), false) || validator.foundOperator(rhs.at(0)) || 
+    //     validator.foundMixedTerm(rhs.at(0))) {
+    //     return (this->setEquation(rhs_string));
+    // }
     else if (Matrix::isValidMatrix(rhs_string)) {
         return (setupMatrix(rhs_string));
     }
+    // else if (Validate::isValidFunction(rhs.at(0))) {
+    //     return (this->setEquation(rhs_string));
+    // }
     cout << "Got here" << endl;
-    return (false);
+    return (this->setEquation(rhs_string));
 }
 
 bool    Instruction::checkOneFunctionValue(string rhs_string) {
-    if (rhs_string.compare("?")) {
+    // cout << "Should print something :: " << rhs_string << endl;
+    if (!rhs_string.compare("?")) {
+        // cout << "Got int to print" << endl;
         this->isPrint = true;
         return (true);
     }
-    return (false);
+    // cout << "Should print something (2)" << endl;
+    return (this->setEquation(rhs_string));
 }
 
 bool    Instruction::checkRightHandSide(vector<string> rhs, bool isFunction, string rhs_str) {
@@ -155,22 +161,22 @@ bool    Instruction::checkRightHandSide(vector<string> rhs, bool isFunction, str
         }
         return (this->setEquation(rhs_str));
     }
-    cout << "Function identified" << endl;
+    // cout << "Function identified (1)" << endl;
     if (rhs.size() == 1) {
-        cout << "RHS is 1" << endl;
+        // cout << "RHS is 1" << endl;
         return (this->checkOneFunctionValue(rhs_str));
     }
-    cout << "Finding more instruction" << endl;
+    // cout << "Finding more instruction" << endl;
     return (this->setEquation(rhs_str));
 }
 
 bool    Instruction::prepareForPrint(string str) {
-    cout << "Finding instruction" << endl;
+    // cout << "Finding instruction" << endl;
     if (findInstruction(str) == NULL) {
-        cout << "Instruction not found" << endl;
+        // cout << "Instruction not found" << endl;
         return (false);
     }
-    cout << "Instruction found" << endl;
+    // cout << "Instruction found" << endl;
     *this = *findInstruction(str);
     this->setMatrix(findInstruction(str)->getMatrix());
     this->setFunction(findInstruction(str)->getFunction());
@@ -254,6 +260,30 @@ bool    Instruction::showEquationValue(string str) {
     return (this->setEquation(str));
 }
 
+bool    Instruction::sortRightHand(vector<string> leftInstructions, vector<string> rhs) {
+    cout << "Left" << endl;
+    if (!Validate::isValidVariable(leftInstructions.at(0), true) &&
+        !Validate::isValidFunction(leftInstructions.at(0))) {
+        return (false);
+    }
+    if (Validate::isValidVariable(leftInstructions.at(0), true)) {
+        return (setVariableData(rhs, leftInstructions.at(0), commands.at(1)));
+    }
+    else if (Validate::isValidFunction(leftInstructions.at(0))) {
+        return (setFunctionData(rhs, leftInstructions.at(0), commands.at(1)));
+    }
+    return (true);
+}
+
+bool    Instruction::sortLeftHand(vector<string> rhs) {
+    cout << "Right" << endl; 
+    if (!rhs.at(0).compare("?")) {
+        this->viewOnly = true;
+        return (showEquationValue(commands.at(0)));
+    }
+    return (true);
+}
+
 bool    Instruction::verifyInstruction() {
     vector<string>  leftInstructions;
     vector<string>  rightInstructions;
@@ -261,25 +291,12 @@ bool    Instruction::verifyInstruction() {
     splitString(commands.at(0), ' ', leftInstructions);
     splitString(commands.at(1), ' ', rightInstructions);
     if (leftInstructions.size() == 1) {
-        cout << "Left" << endl;
-        if (!Validate::isValidVariable(leftInstructions.at(0), true) &&
-            !Validate::isValidFunction(leftInstructions.at(0))) {
-            return (false);
-        }
-        if (Validate::isValidVariable(leftInstructions.at(0), true)) {
-            return (setVariableData(rightInstructions, leftInstructions.at(0), commands.at(1)));
-        }
-        else if (Validate::isValidFunction(leftInstructions.at(0))) {
-            return (setFunctionData(rightInstructions, leftInstructions.at(0), commands.at(1)));
-        }
+        return (this->sortRightHand(leftInstructions, rightInstructions));
     }
     else if (rightInstructions.size() == 1) {
-        cout << "Right" << endl; 
-        if (!rightInstructions.at(0).compare("?")) {
-            this->viewOnly = true;
-            return (showEquationValue(commands.at(0)));
-        }
+        return (this->sortLeftHand(rightInstructions));
     }
+    //Still need to check for two either side.
     return (true);
 }
 
@@ -386,8 +403,8 @@ void        Instruction::showAllInstructions() {
     int len = (int)instructions.size();
 
     while (++index < len) {
-        cout << "Instruction : " << instructions.at(index).getInstruction();
-        cout << " " << instructions.at(index).getfloatValue() << endl;
+        cout << "Instruction : " << instructions.at(index).getInstruction() << endl;
+        //cout << " " << instructions.at(index).getfloatValue() << endl;
     }
 }
 

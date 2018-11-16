@@ -115,6 +115,9 @@ int		main(void) {
 		if (!input.compare("exit")) {
 			proceed = false;
 		}
+		else if (!input.compare("showAll")) {
+			Instruction::showAllInstructions();
+		}
 		else {
 			processInstruction(input);
 		}
