@@ -125,10 +125,10 @@ bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
         tempInstruction->setFloatValue(atof(rhs.at(0).c_str()));
         return (true);
     }
-    else if (!rhs.at(0).compare("?")) {
-        this->isPrint = true;
-        return (true);
-    }
+    // else if (!rhs.at(0).compare("?")) {
+    //     this->isPrint = true;
+    //     return (true);
+    // }
     // else if (Validate::isValidVariable(rhs.at(0), false) || validator.foundOperator(rhs.at(0)) || 
     //     validator.foundMixedTerm(rhs.at(0))) {
     //     return (this->setEquation(rhs_string));
@@ -145,11 +145,11 @@ bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
 
 bool    Instruction::checkOneFunctionValue(string rhs_string) {
     // cout << "Should print something :: " << rhs_string << endl;
-    if (!rhs_string.compare("?")) {
-        // cout << "Got int to print" << endl;
-        this->isPrint = true;
-        return (true);
-    }
+    // if (!rhs_string.compare("?")) {
+    //     cout << "Got int to print" << endl;
+    //     this->isPrint = true;
+    //     return (true);
+    // }
     // cout << "Should print something (2)" << endl;
     return (this->setEquation(rhs_string));
 }
@@ -191,9 +191,9 @@ bool    Instruction::setVariableData(vector<string> rightInstructions, string st
     if (!this->checkRightHandSide(rightInstructions, false, rhs)) {
         return (false);
     }
-    if (this->isPrint) {
-        return (prepareForPrint(str));
-    }
+    // if (this->isPrint) {
+    //     return (prepareForPrint(str));
+    // }
     tempInstruction->setInstructionHead(str);
     this->setInstructionData(*tempInstruction);
     return (true);
@@ -276,12 +276,45 @@ bool    Instruction::sortRightHand(vector<string> leftInstructions, vector<strin
 }
 
 bool    Instruction::sortLeftHand(vector<string> rhs) {
-    cout << "Right" << endl; 
+    cout << "Sorting left :: instruction.cpp line 279" << endl;
     if (!rhs.at(0).compare("?")) {
         this->viewOnly = true;
         return (showEquationValue(commands.at(0)));
     }
     return (true);
+}
+
+bool    Instruction::isViewOnly(string commandString) {
+    int cnt = -1;
+    int times = 0;
+    int len = (int)commandString.length();
+
+    while (++cnt < len) {
+        if ((commandString[cnt] == '?') ||
+                (times > 0 && (isalpha(commandString[cnt]) && isdigit(commandString[cnt])))) {
+            times++;
+        }
+    }
+    return (times == 1);
+}
+
+bool    Instruction::showValue(vector<string> lhs, vector<string> rhs) {
+    if (lhs.size() > 0) {
+
+    }
+    if (rhs.at(rhs.size() - 1).compare("?")) {
+        return (false);
+    }
+    else if (rhs.size() == 1 && !rhs.at(0).compare("?")) {
+        return (this->sortLeftHand(rhs));
+    }
+    else if (rhs.size() == 2) {
+
+    }
+    else {
+        cout << "question mark is not at the right place :: instruction.cpp line 312" << endl;
+    }
+    return (false);
 }
 
 bool    Instruction::verifyInstruction() {
@@ -290,14 +323,21 @@ bool    Instruction::verifyInstruction() {
 
     splitString(commands.at(0), ' ', leftInstructions);
     splitString(commands.at(1), ' ', rightInstructions);
-    if (leftInstructions.size() == 1) {
+    if (leftInstructions.size() == 1 && !this->isViewOnly(commands.at(1))) {
         return (this->sortRightHand(leftInstructions, rightInstructions));
     }
-    else if (rightInstructions.size() == 1) {
-        return (this->sortLeftHand(rightInstructions));
+    // else if (rightInstructions.size() == 1 && !this->isViewOnly(commands.at(1))) {
+    //     return (this->sortLeftHand(rightInstructions));
+    // }
+    else if (isViewOnly(commands.at(1))) {
+        this->viewOnly = true;
+        cout << "Is view only checking values:: instruction.cpp line 333" << endl;
+    }
+    else {
+        cout << "verifyInstruction not implemented as yet:: instruction.cpp line 307" << endl;
     }
     //Still need to check for two either side.
-    return (true);
+    return (false);
 }
 
 void    Instruction::setInstructionData(Instruction data) {

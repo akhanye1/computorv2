@@ -36,6 +36,8 @@ class Instruction {
         bool                        showEquationValue(string str);
         bool                        sortRightHand(vector<string> lefthnd, vector<string> righthnd);
         bool                        sortLeftHand(vector<string> rhs);
+        bool                        isViewOnly(string commandString);
+        bool                        showValue(vector<string> lhs, vector<string> rhs);
 
 
     public:
