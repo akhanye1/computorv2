@@ -38,6 +38,8 @@ class Instruction {
         bool                        sortLeftHand(vector<string> rhs);
         bool                        isViewOnly(string commandString);
         bool                        showValue(vector<string> lhs, vector<string> rhs);
+        bool                        setStoreValue(polynomial *equation);
+        bool                        storePrintedValue(polynomial *equation);
 
 
     public:
@@ -56,7 +58,7 @@ class Instruction {
         float                       getfloatValue() const;
         void                        setFloatValue(float value);
         void                        setInstructionHead(string head);
-        void                        setInstructionData(Instruction data);
+        void                        setInstructionData(Instruction data, bool store = true);
         string                      getCommand() const;
         bool                        printValue() const;
         static void                 showAllInstructions();

@@ -33,7 +33,7 @@ Instruction& Instruction::operator=(Instruction const &rhs) {
 
 bool    Instruction::setupFunction(polynomial *equation) {
     Functions *function = new Functions();
-    
+
     function->setVariableName(equation->getFunctionVariable());
     function->setEquation(equation);
     tempInstruction->setFunction(function);
@@ -45,17 +45,7 @@ void    Instruction::setFunction(Functions *function) {
     this->function = function;
 }
 
-bool    Instruction::setEquation(string rhs_string) {
-    polynomial *equation = new polynomial();
-    Validate validator;
-
-    if (!validator.isPolynomialValid(rhs_string, equation, *this)) {
-        cout << "Is not valid polynomial" << endl;
-        return (false);
-    }
-    // equation->showAll();
-    // cout << "see equation before calculating" << endl;
-    equation->calculate();
+bool    Instruction::setStoreValue(polynomial *equation) {
     // cout << "Equation Type :: " << equation->getEquationType() << " | tempInstruction type :: " << tempInstruction->getType() << endl;
     if (tempInstruction->getType() == VARIABLE) {
         if (equation->getEquationType() != VARIABLE && equation->getEquationType() != MATRIX &&
@@ -72,17 +62,9 @@ bool    Instruction::setEquation(string rhs_string) {
     // cout << "Counter : " << equation->counter << endl;
     if (equation->getMaxTerms() == 1 && equation->getEquationType() == VARIABLE) {
         tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
-        // if (equation->getEquationType() == VARIABLE || equation->getEquationType() == FUNCTION) {
-            
-        //     // cout << "first if statement" << endl;
+        // if (this->viewOnly) {
+        //     cout << equation->getTerm(0)->getCorrectValue() << endl;
         // }
-        // else {
-        //     tempInstruction->setCommand(rhs_string);
-        //     // cout << "second if statement" << endl;
-        // }
-        if (this->viewOnly) {
-            cout << equation->getTerm(0)->getCorrectValue() << endl;
-        }
         return (true);
     }
     else if (equation->isImaginary() && equation->getMaxTerms() > 0) {
@@ -97,6 +79,49 @@ bool    Instruction::setEquation(string rhs_string) {
         return (this->setupFunction(equation));
     }
     return (false);
+}
+
+bool    Instruction::storePrintedValue(polynomial *equation) {
+    tempInstruction = new Instruction();
+
+    // Just for now, debugging purposes, will still need to implement better code
+    if (equation->getMaxTerms() > 0 && equation->getTerm(0)->isVar()) {
+        return (false);
+    }
+    tempInstruction->setInstruction(equation->getEquationType());
+    switch(equation->getEquationType()) {
+        case VARIABLE:
+                tempInstruction->setFloatValue(equation->getTerm(0)->getCorrectValue());
+            break;
+        case IMAGINERY:
+                tempInstruction->setCommand(equation->toEquation());
+        case FUNCTION:
+                tempInstruction->setupFunction(equation);
+            break;
+        default:
+            return (false);
+            break;
+    }
+    this->setInstructionData(*tempInstruction, false);
+    return (true);
+}
+
+bool    Instruction::setEquation(string rhs_string) {
+    polynomial *equation = new polynomial();
+    Validate validator;
+
+    if (!validator.isPolynomialValid(rhs_string, equation, *this)) {
+        cout << "Is not valid polynomial" << endl;
+        return (false);
+    }
+    if (!equation->calculate()) {
+        return (false);
+    }
+    if (this->viewOnly) {
+        cout << "Returned from equation :: " << equation->getEquationType() << endl;
+        return (this->storePrintedValue(equation));
+    }
+    return (this->setStoreValue(equation));
 }
 
 bool    Instruction::setupMatrix(string rhs_string) {
@@ -129,7 +154,7 @@ bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
     //     this->isPrint = true;
     //     return (true);
     // }
-    // else if (Validate::isValidVariable(rhs.at(0), false) || validator.foundOperator(rhs.at(0)) || 
+    // else if (Validate::isValidVariable(rhs.at(0), false) || validator.foundOperator(rhs.at(0)) ||
     //     validator.foundMixedTerm(rhs.at(0))) {
     //     return (this->setEquation(rhs_string));
     // }
@@ -229,7 +254,7 @@ bool    Instruction::setFunctionData(vector<string> rhs_array, string str, strin
     string              variableName;
 
     if (str.compare("?")) {
-        
+
     }
     if (Matrix::isValidMatrix(rhs_string)) {
         return (false);
@@ -252,13 +277,13 @@ bool    Instruction::setFunctionData(vector<string> rhs_array, string str, strin
     return (true);
 }
 
-bool    Instruction::showEquationValue(string str) {
-    tempInstruction = new Instruction();
+// bool    Instruction::showEquationValue(string str) {
+//     tempInstruction = new Instruction();
 
-    tempInstruction->setInstruction(VARIABLE);
-    cout << "String value :: " << str << endl;
-    return (this->setEquation(str));
-}
+//     tempInstruction->setInstruction(VARIABLE);
+//     cout << "String value :: " << str << endl;
+//     return (this->setEquation(str));
+// }
 
 bool    Instruction::sortRightHand(vector<string> leftInstructions, vector<string> rhs) {
     cout << "Left" << endl;
@@ -275,14 +300,14 @@ bool    Instruction::sortRightHand(vector<string> leftInstructions, vector<strin
     return (true);
 }
 
-bool    Instruction::sortLeftHand(vector<string> rhs) {
-    cout << "Sorting left :: instruction.cpp line 279" << endl;
-    if (!rhs.at(0).compare("?")) {
-        this->viewOnly = true;
-        return (showEquationValue(commands.at(0)));
-    }
-    return (true);
-}
+// bool    Instruction::sortLeftHand(vector<string> rhs) {
+//     cout << "Sorting left :: instruction.cpp line 279" << endl;
+//     if (!rhs.at(0).compare("?")) {
+//         this->viewOnly = true;
+//         return (showEquationValue(commands.at(0)));
+//     }
+//     return (true);
+// }
 
 bool    Instruction::isViewOnly(string commandString) {
     int cnt = -1;
@@ -302,11 +327,18 @@ bool    Instruction::showValue(vector<string> lhs, vector<string> rhs) {
     if (lhs.size() > 0) {
 
     }
+    this->viewOnly = true;
     if (rhs.at(rhs.size() - 1).compare("?")) {
         return (false);
     }
     else if (rhs.size() == 1 && !rhs.at(0).compare("?")) {
-        return (this->sortLeftHand(rhs));
+        if (lhs.size() == 1) {
+            cout << "Left is 1 and right is 1:: instruction.cpp line 312" << endl;
+            if (this->prepareForPrint(lhs.at(0)) && this->getType() != FUNCTION) {
+                return (true);
+            }
+        }
+        return (this->setEquation(commands.at(0)));
     }
     else if (rhs.size() == 2) {
 
@@ -321,6 +353,7 @@ bool    Instruction::verifyInstruction() {
     vector<string>  leftInstructions;
     vector<string>  rightInstructions;
 
+    this->viewOnly = false;
     splitString(commands.at(0), ' ', leftInstructions);
     splitString(commands.at(1), ' ', rightInstructions);
     if (leftInstructions.size() == 1 && !this->isViewOnly(commands.at(1))) {
@@ -330,8 +363,8 @@ bool    Instruction::verifyInstruction() {
     //     return (this->sortLeftHand(rightInstructions));
     // }
     else if (isViewOnly(commands.at(1))) {
-        this->viewOnly = true;
         cout << "Is view only checking values:: instruction.cpp line 333" << endl;
+        return (this->showValue(leftInstructions, rightInstructions));
     }
     else {
         cout << "verifyInstruction not implemented as yet:: instruction.cpp line 307" << endl;
@@ -340,9 +373,9 @@ bool    Instruction::verifyInstruction() {
     return (false);
 }
 
-void    Instruction::setInstructionData(Instruction data) {
-    Instruction *savedInstruction = findInstruction(data.getInstruction());
-    if (savedInstruction != NULL) {
+void    Instruction::setInstructionData(Instruction data, bool store) {
+    Instruction *savedInstruction;
+    if ((savedInstruction = findInstruction(data.getInstruction())) != NULL && store) {
         *this = *savedInstruction;
     }
     this->value = data.getValue();
@@ -352,10 +385,12 @@ void    Instruction::setInstructionData(Instruction data) {
     this->command = data.getCommand();
     this->matrix = data.getMatrix();
     this->function = data.getFunction();
-    if (savedInstruction != NULL) {
+    if (savedInstruction != NULL && store) {
         instructions.erase(instructions.begin() + foundIndex);
     }
-    instructions.push_back(*this);
+    if (store) {
+        instructions.push_back(*this);
+    }
 }
 
 string  Instruction::getCommand() const {

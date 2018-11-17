@@ -79,9 +79,9 @@ void	processInstruction(string str) {
 	Instruction *instruction = new Instruction(str);
 
 	if (instruction->isValid()) {
-		if (instruction->isViewOnly()) {
-			return ;
-		}
+		// if (instruction->isViewOnly()) {
+		// 	return ;
+		// }
 		switch (instruction->getType()) {
 			case VARIABLE:
 					cout << "VARIABLE" << endl;
