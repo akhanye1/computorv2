@@ -109,6 +109,7 @@ void	processInstruction(string str) {
 int		main(void) {
 	string	input;
 	bool	proceed = true;
+	
 	while (proceed) {
 		cout << "> ";
 		getline(cin, input);

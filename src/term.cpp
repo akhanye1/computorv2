@@ -1,7 +1,8 @@
  #include "../computorv.h"
 
-int term::priorityLevel = 0;
-int term::maxPriority = 0;
+int     term::priorityLevel = 0;
+int     term::maxPriority = 0;
+bool    term::bracketOpen = false;
 
 term::term(int termSide) {
     this->isConstant = false;
@@ -112,7 +113,7 @@ term::term(string str, char operand, int termSide) {
     this->isExponent = false;
     this->termSide = termSide;
     this->operand = operand;
-    this->order = priorityLevel;
+    this->order = (bracketOpen) ? maxPriority : priorityLevel;
     this->afterBracket = false;
     this->bracketOperator = ' ';
     fillTerm(str);
@@ -343,9 +344,11 @@ void    term::updatePriority(char bracketType) {
     if (bracketType == '(') {
         priorityLevel++;
         maxPriority++;
+        bracketOpen = true;
         return ;
     }
     priorityLevel--;
+    bracketOpen = false;
 }
 
 void    term::setAfterBracket() {
@@ -375,4 +378,8 @@ int     term::getMaxPriorityLevel() {
 void    term::resetPriority() {
     priorityLevel = 0;
     maxPriority = 0;
+}
+
+void    term::reduceMaxPriority()  {
+    maxPriority--;
 }

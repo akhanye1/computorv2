@@ -273,6 +273,9 @@ int		Validate::findNextOperand(int index) {
 }
 
 bool	Validate::isValidExpression(int index) {
+	// cout <<  "Is numberic :: " << this->isNumeric(correctStrings[index]) << endl;
+	// cout <<  "Is valid variable :: " << this->isValidVariable(correctStrings[index], false) << endl;
+	// cout <<  "Is valid function :: " << this->isValidFunction(correctStrings[index]) << endl;
 	return (this->isNumeric(correctStrings[index]) ||
 			this->isValidVariable(correctStrings[index], false) ||
 			this->isValidFunction(correctStrings[index]));
@@ -461,9 +464,9 @@ bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction 
 	}
 	splitString(poly);
 	correctSplit();
-	for (size_t i = 0; i < correctStrings.size(); i++) {
-		cout << "String :: " << correctStrings.at(i) << endl;
-	}
+	// for (size_t i = 0; i < correctStrings.size(); i++) {
+	// 	cout << "String :: " << correctStrings.at(i) << endl;
+	// }
 	if (!this->checkPolynomialAuthentacity()) {
 		cout << "Authentication failed" << endl;
 		return (false);
@@ -529,11 +532,13 @@ bool	Validate::isNumeric(string str) {
 	int		len = (int)str.length();
 	int		periodCount = 0;
 	int		exponentCount = 0;
+	bool	gotInWhileLoop = false;
 
 	if ((str[0] == '-') || (str[0] == '+')) {
 		index = 0;
 	}
 	while (++index < len) {
+		gotInWhileLoop = true;
 		if (!isdigit(str[index]) && str[index] != '.' && periodCount < 1 &&
 			str[index] != '^' && exponentCount < 1) {
 			return (false);
@@ -545,7 +550,7 @@ bool	Validate::isNumeric(string str) {
 			exponentCount++;
 		}
 	}
-	return (true);
+	return (gotInWhileLoop);
 }
 
 Validate::Validate(void) {

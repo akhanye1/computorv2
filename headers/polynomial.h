@@ -23,6 +23,8 @@ class polynomial {
         int             priorityLevel;
         void            simplifyBracket(int start);
         int             getPriorityIndex(int start);
+        void            changeDownAllPrioriy(int index);
+        int             getMaxPriorityLevel();
 
     public:
         polynomial(void);

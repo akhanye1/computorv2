@@ -20,6 +20,7 @@ class term {
         int         termSide;
         static int  priorityLevel;
         static int  maxPriority;
+        static bool bracketOpen;
         void        fillTerm(string str);
 
     public:
@@ -61,6 +62,7 @@ class term {
         char    getBracketOperator() const;
         static int     getMaxPriorityLevel();
         void    setOrder(int order);
-        static void    resetPriority();
+        static void     resetPriority();
+        static void     reduceMaxPriority();
 };
 #endif
