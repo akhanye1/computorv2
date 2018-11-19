@@ -456,6 +456,8 @@ bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
 	return (true);
 }
 
+// 5 ( 10 - 1 + ( 1 * 5 ) + 5 ) + 5 ( 1 )
+
 bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction instructions) {
 	// cout << "String received :: " << poly << endl;
 	term::resetPriority();
@@ -472,7 +474,7 @@ bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction 
 		return (false);
 	}
 	addexpression(equation);
-	// equation->showAll();
+	equation->showAll();
 	return (checkVariables(equation, instructions));
 }
 

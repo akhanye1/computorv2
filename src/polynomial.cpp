@@ -173,13 +173,16 @@ int     polynomial::getPriorityIndex(int start) {
 }
 
 void    polynomial::changeDownAllPrioriy(int index) {
-    if (this->getTerm(index)->getOrder() == this->priorityLevel) {
-        this->getTerm(index)->setOrder(this->priorityLevel - 1);
-        // cout << "Index :: " << index << endl;
-        if (this->getTerm(index)->isAfterBracket()) {
-            this->getTerm(index)->setConstant(this->getTerm(index)->getCorrectValue());
-            this->getTerm(index)->setOperand(this->getTerm(index)->getBracketOperator());
+    while (index >= 0) {
+        if (this->getTerm(index)->getOrder() == this->priorityLevel) {
+            // cout << "Index :: " << index << endl;
+            if (this->getTerm(index)->isAfterBracket()) {
+                this->getTerm(index)->setOrder(this->priorityLevel - 1);
+                this->getTerm(index)->setConstant(this->getTerm(index)->getCorrectValue());
+                this->getTerm(index)->setOperand(this->getTerm(index)->getBracketOperator());
+            }
         }
+        index--;
     }
 }
 
@@ -199,7 +202,7 @@ void    polynomial::simplifyBracket(int start) {
     // cout << "Times :: " << times;
     // cout << " | Max times :: " << maxTerms;
     // cout << " | Priority level :: " << this->priorityLevel << endl;
-    if (times == 1 && this->priorityLevel > 0) {
+    if (times > 0 && this->priorityLevel > 0) {
         if ((index = getPriorityIndex(startIndex)) == -1) {
             return ;
         }
@@ -216,7 +219,7 @@ void    polynomial::bodmasRule(int start) {
     static int numTimes = 0;
 
     // cout << "Bodmas :: " << start << endl;
-    // cout << "Sorting for priority :: " << this->priorityLevel << endl; 
+    cout << "Sorting for priority :: " << this->priorityLevel << endl; 
     // this->showAll();
     solveExponents(start);
     solveByOrder(start + 1, '/');
@@ -629,7 +632,7 @@ bool    polynomial::calculate() {
         if (this->getTerm(0)->getOperand() == '*' || this->getTerm(0)->getOperand() == '/') {
             this->getTerm(0)->setOperand('+');
         }
-        // cout << "Priority Level :: " << this->priorityLevel << endl;
+        cout << "Priority Level :: " << this->priorityLevel << endl;
         // this->showAll();
         bodmasRule(0);
         // this->showAll();
@@ -641,6 +644,8 @@ bool    polynomial::calculate() {
     }
     if (!this->isImaginary() && !this->isFunction()) {
         if (this->getMaxTerms() != 1) {
+            // showAll();
+            cout << "Failed at imaginary and function" << endl;
             return (false);
         }
         this->equationType = VARIABLE;

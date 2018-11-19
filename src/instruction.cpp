@@ -54,7 +54,8 @@ bool    Instruction::setStoreValue(polynomial *equation) {
             return (false);
         }
     }
-    else if (tempInstruction->getType() != equation->getEquationType()) {
+    else if (tempInstruction->getType() != FUNCTION && tempInstruction->getType() != equation->getEquationType()) {
+        // cout << "It failed here" << endl;
         return (false);
     }
     tempInstruction->setInstruction(equation->getEquationType());
@@ -114,7 +115,9 @@ bool    Instruction::setEquation(string rhs_string) {
         cout << "Is not valid polynomial" << endl;
         return (false);
     }
-    if (!equation->calculate()) {
+    if (((tempInstruction != NULL && tempInstruction->getType() != FUNCTION) ||
+            (tempInstruction == NULL)) && !equation->calculate()) {
+        cout << "failed at calculate" << endl;
         return (false);
     }
     if (this->viewOnly) {
