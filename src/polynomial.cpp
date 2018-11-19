@@ -196,9 +196,9 @@ void    polynomial::simplifyBracket(int start) {
         start++;
     }
     // this->showAll();
-    cout << "Times :: " << times;
-    cout << " | Max times :: " << maxTerms;
-    cout << " | Priority level :: " << this->priorityLevel << endl;
+    // cout << "Times :: " << times;
+    // cout << " | Max times :: " << maxTerms;
+    // cout << " | Priority level :: " << this->priorityLevel << endl;
     if (times == 1 && this->priorityLevel > 0) {
         if ((index = getPriorityIndex(startIndex)) == -1) {
             return ;
@@ -216,7 +216,7 @@ void    polynomial::bodmasRule(int start) {
     static int numTimes = 0;
 
     // cout << "Bodmas :: " << start << endl;
-    cout << "Sorting for priority :: " << this->priorityLevel << endl; 
+    // cout << "Sorting for priority :: " << this->priorityLevel << endl; 
     // this->showAll();
     solveExponents(start);
     solveByOrder(start + 1, '/');
@@ -622,19 +622,21 @@ int     polynomial::getMaxPriorityLevel() {
 }
 
 bool    polynomial::calculate() {
-    while (term::getMaxPriorityLevel() >= 0) {
+    int times = this->getMaxPriorityLevel();
+
+    while (times >= 0) {
         this->priorityLevel = this->getMaxPriorityLevel();
         if (this->getTerm(0)->getOperand() == '*' || this->getTerm(0)->getOperand() == '/') {
             this->getTerm(0)->setOperand('+');
         }
-        cout << "Priority Level :: " << this->priorityLevel << endl;
-        this->showAll();
+        // cout << "Priority Level :: " << this->priorityLevel << endl;
+        // this->showAll();
         bodmasRule(0);
         // this->showAll();
         // cout << "Priority level after bodmas :: " << this->priorityLevel << endl;
         this->priorityLevel = this->getMaxPriorityLevel();
         this->simplifyBracket(0);
-        term::reduceMaxPriority();
+        times--;
         // cout << "Priority level after simply bracket :: " << this->priorityLevel << endl;
     }
     if (!this->isImaginary() && !this->isFunction()) {
