@@ -10,6 +10,7 @@ Instruction::Instruction() {
 }
 
 Instruction::Instruction(string str) {
+    this->_showAnswer = true;
     this->matrix = NULL;
     this->function = NULL;
     this->splitString(str, '=', this->commands);
@@ -107,6 +108,114 @@ bool    Instruction::storePrintedValue(polynomial *equation) {
     return (true);
 }
 
+bool	setValue(polynomial *equation, term oneTerm, int index) {
+	int		i;
+	term	tempTerm;
+    int     maxTerms = equation->getMaxTerms();
+
+	i = -1;
+	while (++i < maxTerms) {
+		tempTerm = *equation->getTerm(i);
+		if (tempTerm.getSide() > 0) {
+			equation->changeSide(oneTerm, index);
+			equation->showExpression("Swap term");
+			break;
+		}
+		if (tempTerm.sameAs(oneTerm)) {
+			tempTerm.swapTerm(oneTerm);
+			equation->moveLeft(tempTerm, i, index);
+			equation->showExpression("Swap term");
+			break ;
+		}
+	}
+	return (true);
+}
+
+bool	reducedOk(polynomial *equation) {
+	int		index;
+	term	oneTerm;
+	int		maxRight;
+    int     maxTerms = equation->getMaxTerms();
+
+	index = -1;
+	// equation->simplifyRight();
+	index = -1;
+    // equation->showAll();
+    // cout << "Max terms :: " << maxTerms << endl;
+	while (++index < maxTerms) {
+		oneTerm = *equation->getTerm(index);
+		if (oneTerm.getSide() > 0) {
+			setValue(equation, oneTerm, index);
+			maxTerms = equation->getMaxTerms();
+            index = -1;
+		}
+	}
+	maxRight = 0;
+	index = -1;
+	while (++index < maxTerms) {
+		if (equation->getTerm(index)->getSide() > 0) {
+			maxRight++;
+		}
+	}
+	if (maxRight > 0) {
+		cout << "Max Right is more that 0 >> " << maxRight << endl;
+		return (false);
+	}
+	// equation->showReduced();
+	// equation->solveExponents(0);
+	return (true);
+}
+
+int		polynomialDegree(polynomial *equation) {
+	int		len;
+	term	oneTerm;
+	int		polDegree;
+	int		maxTerms = equation->getMaxTerms();
+
+	len = -1;
+	polDegree = 1;
+	while (++len < maxTerms) {
+		oneTerm = *equation->getTerm(len);
+		if (oneTerm.getSide() > 0) {
+			return (polDegree);
+		}
+		if (oneTerm.isExp() &&  oneTerm.getExponent() > polDegree) {
+			polDegree = oneTerm.getExponent();
+		}
+	}
+	return (polDegree);
+}
+
+bool    Instruction::solvePolynomial(polynomial *equation) {
+    int polDegree;
+
+    if (!reducedOk(equation)) {
+        return (false);
+    }
+    // equation->showAll();
+    equation->calculate();
+    // equation->showAll();
+    if ((polDegree = polynomialDegree(equation)) > 2) {
+        cout << "The Polynomial degree is stricly greater than 2, I can't solve." << endl;
+        return (false);
+    }
+    if (polDegree == 1) {
+        if (equation->getMaxTerms() < 1 && equation->getMaxTerms() > 2) {
+            return (false);
+        }
+        equation->solveExpression();
+    }
+    if (polDegree == 2) {
+        if (equation->getMaxTerms() < 1 && equation->getMaxTerms() > 3) {
+            return (false);
+        }
+        equation->solveQuadradic();
+    }
+    // equation->showAll();
+    this->_showAnswer = false;
+    return (true);
+}
+
 bool    Instruction::setEquation(string rhs_string) {
     polynomial *equation = new polynomial();
     Validate validator;
@@ -115,10 +224,16 @@ bool    Instruction::setEquation(string rhs_string) {
         cout << "Is not valid polynomial" << endl;
         return (false);
     }
-    if (((tempInstruction != NULL && tempInstruction->getType() != FUNCTION) ||
-            (tempInstruction == NULL)) && !equation->calculate()) {
-        cout << "failed at calculate" << endl;
-        return (false);
+    if (rhs_string.find("=") == string::npos) {
+        if (((tempInstruction != NULL && tempInstruction->getType() != FUNCTION) ||
+                (tempInstruction == NULL)) && !equation->calculate()) {
+            cout << "failed at calculate" << endl;
+            return (false);
+        }
+    }
+    else {
+        // cout << "At least is valid" << endl;
+        return (solvePolynomial(equation));
     }
     if (this->viewOnly) {
         // cout << "Returned from equation :: " << equation->getEquationType() << endl;
@@ -326,6 +441,24 @@ bool    Instruction::isViewOnly(string commandString) {
     return (times == 1);
 }
 
+bool    Instruction::preparePolynomialEquation(string str) {
+    stringstream    ss;
+    Instruction     *fVariable;
+
+    if (!Validate::isValidFunction(commands.at(0))) {
+        return (false);
+    }
+    if (((fVariable = this->findInstruction(commands.at(0))) == NULL) &&
+            (fVariable->getType() != FUNCTION)) {
+        return (false);
+    };
+    ss << fVariable->getFunction()->toString();
+    ss << " = ";
+    ss << str;
+    // cout << "String to send :: " << ss.str() << endl;
+    return (this->setEquation(ss.str()));
+}
+
 bool    Instruction::showValue(vector<string> lhs, vector<string> rhs) {
     tempInstruction = NULL;
     this->viewOnly = true;
@@ -342,7 +475,9 @@ bool    Instruction::showValue(vector<string> lhs, vector<string> rhs) {
         return (this->setEquation(commands.at(0)));
     }
     else if (rhs.size() == 2) {
-
+        if (lhs.size() == 1) {
+            return (preparePolynomialEquation(rhs.at(0)));
+        }
     }
     else {
         cout << "question mark is not at the right place :: instruction.cpp line 312" << endl;
@@ -502,4 +637,8 @@ void        Instruction::setMatrix(Matrix *tempMatrix) {
 
 bool        Instruction::isViewOnly() const {
     return this->viewOnly;
+}
+
+bool        Instruction::isShowAnswer() const {
+    return (this->_showAnswer);
 }

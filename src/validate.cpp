@@ -12,7 +12,7 @@ bool	isOperand(string ch) {
 
 bool	Validate::isNextOperand(string ch) {
 	return (!ch.compare("+") || !ch.compare("-") || !ch.compare("*") || !ch.compare("/") || !ch.compare("%") ||
-		!ch.compare("(") || !ch.compare(")"));
+		!ch.compare("(") || !ch.compare(")") || !ch.compare("="));
 }
 
 bool	Validate::foundOperator(string str) {
@@ -393,6 +393,29 @@ int		Validate::addTermForClosingBracket(polynomial *equation, int index, int ter
 	return (findNextOperand(index));
 }
 
+int		Validate::addForEqualSign(polynomial *equation, int index, int termSide) {
+	int cnt = 0;
+	if (!correctStrings[index + 1].compare("(")) {
+		cnt++;
+		cnt += addTermForOpenBracket(equation, index + 1, termSide, correctStrings[index]);
+		return (cnt);
+	}
+	else if (isOperand(correctStrings[index+1]) && isValidExpression(index + 2)) {
+		term *termClass = new term(correctStrings[index + 2], correctStrings[index + 1][0], termSide);
+		equation->addTerm(termClass);
+		return (3);
+	}
+	else if (isValidExpression(index + 1)) {
+		term *termClass = new term(correctStrings[index + 1], '+', termSide);
+		equation->addTerm(termClass);
+		return (2);
+	}
+	else {
+		cout << "Term was not add to polynomial (3.1)" << endl;
+	}
+	return (findNextOperand(index));
+}
+
 void	Validate::addexpression(polynomial *equation) {
 	int	index = 0;
 	int	termSide = 0;
@@ -430,6 +453,10 @@ void	Validate::addexpression(polynomial *equation) {
 		else if (correctStrings[index][0] == '(') {
 			index += addTermForOpenBracket(equation, index, termSide, "*");
 			// cout << "After adding for open Barcket " << endl;
+		}
+		else if (correctStrings[index][0] == '=') {
+			termSide++;
+			index += addForEqualSign(equation, index, termSide);
 		}
 		// equation->showAll();
 	}

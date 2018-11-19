@@ -42,6 +42,7 @@ class	Validate {
         bool            isExponentCorrect();
         bool            closePreviousTerm(polynomial *equation, string str);
         void            setAllBracketExponents(polynomial *equation, int expValue, int index);
+        int             addForEqualSign(polynomial *equation, int index, int termSide);
 
 	public:
         Validate(void);

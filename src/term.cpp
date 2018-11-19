@@ -298,6 +298,10 @@ bool    term::addTerm(term addTerm) {
             tempSum = (int)temp1 % (int)temp2;
         } 
         // tempSum = (addTerm.getOperand() == '*') ? temp1 * temp2 : temp1 / temp2;
+        if (tempSum < 0) {
+            this->setOperand('-');
+            tempSum *= -1;
+        }
         this->setConstant(tempSum);
         matchTerm(addTerm);
         return (true);

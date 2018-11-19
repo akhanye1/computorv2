@@ -232,6 +232,8 @@ void    polynomial::bodmasRule(int start) {
     solveExponents(start);
     solveByOrder(start + 1, '/');
     solveByOrder(start + 1, '*');
+    // cout << "After multiplication" << endl;
+    // this->showAll();
     solveByOrder(start + 1, '%');
     solveByOrder(start + 1, '+');
     solveByOrder(start + 1, '-');

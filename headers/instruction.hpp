@@ -21,6 +21,7 @@ class Instruction {
         string                      command;
         string                      instruction;
         bool                        viewOnly;
+        bool                        _showAnswer;
         bool                        verifyInstruction();
         bool                        checkRightHandSide(vector<string> rhs, bool isFunction, string rhs_string);
         bool                        setVariableData(vector<string> instructions, string instr, string rhs);
@@ -40,6 +41,8 @@ class Instruction {
         bool                        showValue(vector<string> lhs, vector<string> rhs);
         bool                        setStoreValue(polynomial *equation);
         bool                        storePrintedValue(polynomial *equation);
+        bool                        preparePolynomialEquation(string str);
+        bool                        solvePolynomial(polynomial *equation);
 
 
     public:
@@ -69,6 +72,7 @@ class Instruction {
         Functions                   *getFunction();
         string                      getVariableName(string str);
         bool                        isViewOnly() const;
+        bool                        isShowAnswer() const;
 };
 
 #endif
