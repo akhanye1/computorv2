@@ -84,19 +84,19 @@ void	processInstruction(string str) {
 		// }
 		switch (instruction->getType()) {
 			case VARIABLE:
-					cout << "VARIABLE" << endl;
+					// cout << "VARIABLE" << endl;
 					cout << instruction->getfloatValue() << endl;
 				break;
 			case IMAGINERY:
-					cout << "IMAGINARY" << endl;
+					// cout << "IMAGINARY" << endl;
 					cout << instruction->getCommand() << endl;
 				break;
 			case MATRIX:
-					cout << "MATRICES" << endl;
+					// cout << "MATRICES" << endl;
 					cout << instruction->getMatrix()->toString() << endl;
 				break;
 			case FUNCTION:
-					cout << "FUNCTION" << endl;
+					// cout << "FUNCTION" << endl;
 					cout << instruction->getFunction()->toString() << endl;
 				break;
 		}

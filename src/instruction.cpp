@@ -121,7 +121,7 @@ bool    Instruction::setEquation(string rhs_string) {
         return (false);
     }
     if (this->viewOnly) {
-        cout << "Returned from equation :: " << equation->getEquationType() << endl;
+        // cout << "Returned from equation :: " << equation->getEquationType() << endl;
         return (this->storePrintedValue(equation));
     }
     return (this->setStoreValue(equation));
@@ -167,7 +167,7 @@ bool    Instruction::checkOneValue(vector<string> rhs, string rhs_string) {
     // else if (Validate::isValidFunction(rhs.at(0))) {
     //     return (this->setEquation(rhs_string));
     // }
-    cout << "Got here" << endl;
+    // cout << "Got here" << endl;
     return (this->setEquation(rhs_string));
 }
 
@@ -289,7 +289,7 @@ bool    Instruction::setFunctionData(vector<string> rhs_array, string str, strin
 // }
 
 bool    Instruction::sortRightHand(vector<string> leftInstructions, vector<string> rhs) {
-    cout << "Left" << endl;
+    // cout << "Left" << endl;
     if (!Validate::isValidVariable(leftInstructions.at(0), true) &&
         !Validate::isValidFunction(leftInstructions.at(0))) {
         return (false);
@@ -327,16 +327,14 @@ bool    Instruction::isViewOnly(string commandString) {
 }
 
 bool    Instruction::showValue(vector<string> lhs, vector<string> rhs) {
-    if (lhs.size() > 0) {
-
-    }
+    tempInstruction = NULL;
     this->viewOnly = true;
     if (rhs.at(rhs.size() - 1).compare("?")) {
         return (false);
     }
     else if (rhs.size() == 1 && !rhs.at(0).compare("?")) {
         if (lhs.size() == 1) {
-            cout << "Left is 1 and right is 1:: instruction.cpp line 312" << endl;
+            // cout << "Left is 1 and right is 1:: instruction.cpp line 312" << endl;
             if (this->prepareForPrint(lhs.at(0)) && this->getType() != FUNCTION) {
                 return (true);
             }
@@ -366,7 +364,7 @@ bool    Instruction::verifyInstruction() {
     //     return (this->sortLeftHand(rightInstructions));
     // }
     else if (isViewOnly(commands.at(1))) {
-        cout << "Is view only checking values:: instruction.cpp line 333" << endl;
+        // cout << "Is view only checking values:: instruction.cpp line 333" << endl;
         return (this->showValue(leftInstructions, rightInstructions));
     }
     else {

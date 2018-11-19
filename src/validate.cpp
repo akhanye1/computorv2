@@ -126,9 +126,9 @@ int		Validate::lastIndexOfAlpha(string str) {
 			}
 			else if (str[i] == '^' && powerCount < 1) {
 				if (isdigit(str[i + 1])) {
-					cout << "next item :: " << str[i + 1] << " | text :: " << str.substr(i + 1) << endl;
+					// cout << "next item :: " << str[i + 1] << " | text :: " << str.substr(i + 1) << endl;
 					i += 1 + (this->lastIndexOfFloat(str.substr(i + 1)) + 1);
-					cout << "i @ :: " << str[i] << endl;
+					// cout << "i @ :: " << str[i] << endl;
 				}
 			}
 			else if (bracketsCount > 0 && isdigit(str[i])) {
@@ -219,7 +219,7 @@ void	Validate::splitForClosingBracket(string str) {
 }
 
 void	Validate::splitMixedTerm(string str) {
-	cout << "Splitting in mixed term >>>" << str << endl;
+	// cout << "Splitting in mixed term >>>" << str << endl;
 	if (isalpha(str[0])) {
 		return (splitForAlpha(str));
 	}
@@ -230,7 +230,7 @@ void	Validate::splitMixedTerm(string str) {
 		if (str[1] == '^') {
 			return (splitForClosingBracket(str));
 		}
-		return (splitForOneChar(str));	
+		return (splitForOneChar(str));
 	}
 	else if (str[0] == '+' || str[0] == '-' || str[0] == '*'
 		|| str[0] == '/' || str[0] == '(' || str[0] == ')' || str[0] == '%') {
@@ -294,15 +294,16 @@ int		Validate::findNextOperand(int index) {
 }
 
 bool	Validate::isValidExpression(int index) {
+	// cout << "Checking :: " << correctStrings[index] << endl;
 	// cout <<  "Is numberic :: " << this->isNumeric(correctStrings[index]) << endl;
 	// cout <<  "Is valid variable :: " << this->isValidVariable(correctStrings[index], false) << endl;
 	// cout <<  "Is valid function :: " << this->isValidFunction(correctStrings[index]) << endl;
 	return (this->isNumeric(correctStrings[index]) ||
 			this->isValidVariable(correctStrings[index], false) ||
-			this->isValidFunction(correctStrings[index]));
+			this->isValidFunction(correctStrings[index], false));
 }
 
-int		Validate::addTermForOpenBracket(polynomial *equation, int index, int termSide, 
+int		Validate::addTermForOpenBracket(polynomial *equation, int index, int termSide,
 		string bracketOperand) {
 	term::updatePriority(correctStrings[index][0]);
 	// Check for operand and if valid number or variable
@@ -343,8 +344,37 @@ int		Validate::addTermForOperand(polynomial *equation, int index, int termSide) 
 	return (findNextOperand(index));
 }
 
+void	Validate::setAllBracketExponents(polynomial *equation, int expValue, int index) {
+	int priorityOrder = equation->getTerm(index)->getOrder();
+	while (equation->getTerm(index)->getOrder() == priorityOrder && index >= 0) {
+		if (equation->getTerm(index)->isAfterBracket()) {
+			equation->getTerm(index)->setBracketExponent(expValue);
+		}
+		index--;
+	}
+	// cout << "Ater adding values for bracket" << endl;
+	// equation->showAll();
+}
+
+bool	Validate::closePreviousTerm(polynomial *equation, string str) {
+	int lastIndex = equation->getMaxTerms() - 1;
+
+	// cout << "Trying to close for" << str << endl;
+	// cout << "Last Term " << endl;
+	// equation->getTerm(lastIndex)->toString();
+	equation->getTerm(lastIndex)->closeBracket();
+	// cout << "After closing bracket" << endl;
+	// equation->getTerm(lastIndex)->toString();
+	if (str[1] == '^') {
+		// cout << "Setting exponent value" << endl;
+		this->setAllBracketExponents(equation, atoi(&str[2]), lastIndex);
+	}
+	return (true);
+}
+
 int		Validate::addTermForClosingBracket(polynomial *equation, int index, int termSide) {
 	term::updatePriority(correctStrings[index][0]);
+	this->closePreviousTerm(equation, correctStrings[index]);
 	if (isOperand(correctStrings[index + 1]) && isValidExpression(index + 2)) {
 		term *termClass = new term(correctStrings[index + 2], correctStrings[index + 1][0], termSide);
 		equation->addTerm(termClass);
@@ -352,8 +382,8 @@ int		Validate::addTermForClosingBracket(polynomial *equation, int index, int ter
 	}
 	else if (isValidExpression(index + 1)) {
 		term *termClass = new term(correctStrings[index + 1], '+', termSide);
-		termClass->setAfterBracket();
-		termClass->setOperatorBracket(correctStrings[index][0]);
+		// termClass->setAfterBracket();
+		// termClass->setOperatorBracket(correctStrings[index][0]);
 		equation->addTerm(termClass);
 		return (2);
 	}
@@ -368,13 +398,23 @@ void	Validate::addexpression(polynomial *equation) {
 	int	termSide = 0;
 
 	if (correctStrings[0][0] == '+' || correctStrings[0][0] == '-') {
-		term *termClass = new term(correctStrings[1], correctStrings[0][0], termSide);
-		equation->addTerm(termClass);
+		if (isValidExpression(1)) {
+			term *termClass = new term(correctStrings[1], correctStrings[0][0], termSide);
+			equation->addTerm(termClass);
+		}
+		else {
+			cout << "Term was not add to the polynomial (4)" << endl;
+		}
 		index = findNextOperand(index);
 	}
 	else if (correctStrings[0][0] != '(') {
-		term *termClass = new term(correctStrings[0], '+', termSide);
-		equation->addTerm(termClass);
+		if (isValidExpression(0)) {
+			term *termClass = new term(correctStrings[0], '+', termSide);
+			equation->addTerm(termClass);
+		}
+		else {
+			cout << "Term was not add to the polynomial (5)" << endl;
+		}
 		index = findNextOperand(index);
 	}
 	while (index < ((int)correctStrings.size() - 1)) {
@@ -393,6 +433,13 @@ void	Validate::addexpression(polynomial *equation) {
 		}
 		// equation->showAll();
 	}
+	if (index < (int)correctStrings.size()) {
+		if (correctStrings[index][0] == ')') {
+			term::updatePriority(correctStrings[index][0]);
+			this->closePreviousTerm(equation, correctStrings[index]);
+		}
+	}
+	// cout << "index at (" << correctStrings[index] << ")" << endl;
 }
 
 //negative exponents
@@ -487,15 +534,16 @@ bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction 
 	}
 	splitString(poly);
 	correctSplit();
-	for (size_t i = 0; i < correctStrings.size(); i++) {
-		cout << "String :: " << correctStrings.at(i) << endl;
-	}
+	// for (size_t i = 0; i < correctStrings.size(); i++) {
+	// 	cout << "String :: " << correctStrings.at(i) << endl;
+	// }
 	if (!this->checkPolynomialAuthentacity()) {
 		cout << "Authentication failed" << endl;
 		return (false);
 	}
 	addexpression(equation);
-	equation->showAll();
+	// cout << "AT THE END" << endl;
+	// equation->showAll();
 	return (checkVariables(equation, instructions));
 }
 
@@ -521,7 +569,7 @@ bool	Validate::isValidVariable(string str, bool strict) {
 	return (true);
 }
 
-bool	Validate::isValidFunction(string str) {
+bool	Validate::isValidFunction(string str, bool strict) {
 	size_t	index;
 	size_t	lastIndex;
 	string	variableTemp;
@@ -547,7 +595,10 @@ bool	Validate::isValidFunction(string str) {
 		return (false);
 	}
 	variableTemp = str.substr(index + 1, (lastIndex - index) - 1);
-	return (isValidVariable(variableTemp, true));
+	if (strict) {
+		return (isValidVariable(variableTemp, true));
+	}
+	return (isValidVariable(variableTemp, true) || isNumeric(variableTemp));
 }
 
 bool	Validate::isNumeric(string str) {

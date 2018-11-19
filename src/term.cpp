@@ -34,6 +34,9 @@ term    & term::operator=(term const & rhs) {
     this->termSide = rhs.getSide();
     this->afterBracket = rhs.isAfterBracket();
     this->bracketOperator = rhs.getBracketOperator();
+    this->isLastInBracket = rhs.isClosingBracket();
+    this->_isBracketExponent  = rhs.isBracketExponent();
+    this->bracketExponentValue = rhs.getBracketExponent();
     return (*this);
 }
 
@@ -115,7 +118,9 @@ term::term(string str, char operand, int termSide) {
     this->operand = operand;
     this->order = (bracketOpen) ? maxPriority : priorityLevel;
     this->afterBracket = false;
+    this->isLastInBracket = false;
     this->bracketOperator = ' ';
+    this->_isBracketExponent = false;
     fillTerm(str);
 }
 
@@ -128,6 +133,9 @@ void    term::replaceTerm(term tempTerm) {
     this->isConstant = tempTerm.isConst();
     this->isVariable = tempTerm.isVar();
     this->isExponent = tempTerm.isExp();
+    this->isLastInBracket = tempTerm.isClosingBracket();
+    this->bracketExponentValue = tempTerm.getBracketExponent();
+    this->_isBracketExponent = tempTerm.isBracketExponent();
 }
 
 void    term::matchTerm(term rhs) {
@@ -221,7 +229,13 @@ void    term::toString() {
     cout << " Side : (" << this->termSide << ") ";
     cout << " | Priority : " << this->order;
     cout << " >> is first :: " << this->afterBracket;
-    cout << " >> bracket operator :: " << this->bracketOperator << endl;
+    cout << " >> bracket operator :: " << this->bracketOperator;
+    cout << " | Is last " << this->isLastInBracket;
+    cout << " | Is Bracket Exponent " << this->isBracketExponent();
+    if (this->_isBracketExponent) {
+        cout << " | Bracket Exponent " << this->bracketExponentValue;
+    }
+    cout << endl;
 }
 
 float   term::getConstant() const { return (this->constant); }
@@ -382,4 +396,25 @@ void    term::resetPriority() {
 
 void    term::reduceMaxPriority()  {
     maxPriority--;
+}
+
+void    term::closeBracket() {
+    this->isLastInBracket = true;
+}
+
+bool    term::isClosingBracket() const {
+    return (this->isLastInBracket);
+}
+
+void    term::setBracketExponent(int expValue) {
+    this->_isBracketExponent = true;
+    this->bracketExponentValue = expValue;
+}
+
+bool    term::isBracketExponent() const {
+    return (this->_isBracketExponent);
+}
+
+int     term::getBracketExponent() const {
+    return (this->bracketExponentValue);
 }

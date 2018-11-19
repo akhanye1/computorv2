@@ -13,6 +13,8 @@ class term {
         bool        isConstant;
         bool        isVariable;
         bool        isExponent;
+        bool        _isBracketExponent;
+        int         bracketExponentValue;
         bool        afterBracket;
         char        bracketOperator;
         int         order;
@@ -22,6 +24,7 @@ class term {
         static int  maxPriority;
         static bool bracketOpen;
         void        fillTerm(string str);
+        bool        isLastInBracket;
 
     public:
         term(int termSide);
@@ -64,5 +67,11 @@ class term {
         void    setOrder(int order);
         static void     resetPriority();
         static void     reduceMaxPriority();
+        void    closeBracket();
+        bool    isClosingBracket() const;
+        void    setBracketExponent(int expValue);
+        bool    isBracketExponent() const;
+        int     getBracketExponent() const;
+        
 };
 #endif

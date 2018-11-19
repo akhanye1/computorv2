@@ -40,13 +40,15 @@ class	Validate {
         int             addTermForClosingBracket(polynomial *equation, int index, int termSide);
         bool            isValidExpression(int index);
         bool            isExponentCorrect();
+        bool            closePreviousTerm(polynomial *equation, string str);
+        void            setAllBracketExponents(polynomial *equation, int expValue, int index);
 
 	public:
         Validate(void);
 		bool	        isPolynomialValid(string poly, polynomial *equation, Instruction instruction);
         bool            isTermValid(char *term, polynomial *equation, int *termValid);
         static bool     isValidVariable(string str, bool strict);
-        static bool     isValidFunction(string str);
+        static bool     isValidFunction(string str, bool strict = true);
         static bool     isNumeric(string str);
         bool            foundOperator(string str);
         bool            foundMixedTerm(string str);

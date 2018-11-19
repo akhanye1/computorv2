@@ -173,12 +173,20 @@ int     polynomial::getPriorityIndex(int start) {
 }
 
 void    polynomial::changeDownAllPrioriy(int index) {
+    float   tempValue;
+    int     tempExponent;
+
     while (index >= 0) {
         if (this->getTerm(index)->getOrder() == this->priorityLevel) {
             // cout << "Index :: " << index << endl;
             if (this->getTerm(index)->isAfterBracket()) {
                 this->getTerm(index)->setOrder(this->priorityLevel - 1);
                 this->getTerm(index)->setConstant(this->getTerm(index)->getCorrectValue());
+                if (this->getTerm(index)->isBracketExponent()) {
+                    tempValue = this->getTerm(index)->getCorrectValue();
+                    tempExponent = this->getTerm(index)->getBracketExponent();
+                    this->getTerm(index)->setConstant(power(tempValue, tempExponent));
+                }
                 this->getTerm(index)->setOperand(this->getTerm(index)->getBracketOperator());
             }
         }
@@ -210,8 +218,8 @@ void    polynomial::simplifyBracket(int start) {
         return ;
     }
     else {
-        this->priorityLevel--;
-        cout << "Still to be implemented (Nothing to be implemented)::polynomial.cpp line 211" << endl;
+        // this->priorityLevel--;
+        // cout << "Still to be implemented (Nothing to be implemented)::polynomial.cpp line 211" << endl;
     }
 }
 
@@ -219,7 +227,7 @@ void    polynomial::bodmasRule(int start) {
     static int numTimes = 0;
 
     // cout << "Bodmas :: " << start << endl;
-    cout << "Sorting for priority :: " << this->priorityLevel << endl; 
+    // cout << "Sorting for priority :: " << this->priorityLevel << endl;
     // this->showAll();
     solveExponents(start);
     solveByOrder(start + 1, '/');
@@ -228,8 +236,9 @@ void    polynomial::bodmasRule(int start) {
     solveByOrder(start + 1, '+');
     solveByOrder(start + 1, '-');
     solveExponents(start);
+    // cout << "DONE WITH BODMAS AND EXPONENTS" << endl;
     // this->showAll();
-    // simplifyBracket(start);
+    simplifyBracket(start);
     // this->showAll();
     // cout << "NUMTIMES NUMTIMES NUMTIMES" << numTimes << endl;
     // showAll();
@@ -632,13 +641,13 @@ bool    polynomial::calculate() {
         if (this->getTerm(0)->getOperand() == '*' || this->getTerm(0)->getOperand() == '/') {
             this->getTerm(0)->setOperand('+');
         }
-        cout << "Priority Level :: " << this->priorityLevel << endl;
+        // cout << "Priority Level :: " << this->priorityLevel << endl;
         // this->showAll();
         bodmasRule(0);
         // this->showAll();
         // cout << "Priority level after bodmas :: " << this->priorityLevel << endl;
         this->priorityLevel = this->getMaxPriorityLevel();
-        this->simplifyBracket(0);
+        // this->simplifyBracket(0);
         times--;
         // cout << "Priority level after simply bracket :: " << this->priorityLevel << endl;
     }
@@ -662,21 +671,10 @@ string  polynomial::toEquation() {
     stringstream    ss;
     string          tempString;
     int             maxTerms = this->getMaxTerms();
-    int             currentPriority;
-    string          operatorVal;
 
-    currentPriority = 0;
-    if (maxTerms > 0) {
-        currentPriority = this->terms.at(0).getOrder();
-    }
     for (int i = 0; i < maxTerms; i++) {
-        if (this->terms.at(i).getOrder() != currentPriority) {
-            if (this->terms.at(i).getOrder() > currentPriority && this->terms.at(i).isAfterBracket()) {
-                ss << " " << this->terms.at(i).getBracketOperator() <<  " " ;
-            }
-            operatorVal = (this->terms.at(i).getOrder() > currentPriority) ? " ( " : " ) ";
-            ss << operatorVal;
-            currentPriority = this->terms.at(i).getOrder();
+        if (this->terms.at(i).isAfterBracket()) {
+            ss <<  this->terms.at(i).getBracketOperator() << " ( ";
         }
         if (i > 0) {
             ss << this->terms.at(i).getOperand() << " ";
@@ -690,6 +688,9 @@ string  polynomial::toEquation() {
         }
         if (this->terms.at(i).isExp()) {
             ss << "^" << this->terms.at(i).getExponent();
+        }
+        if (this->terms.at(i).isClosingBracket()) {
+            ss << " )" ;
         }
         ss << " ";
     }
