@@ -203,13 +203,34 @@ void	Validate::splitForOneChar(string str) {
 	}
 }
 
+void	Validate::splitForClosingBracket(string str) {
+	if (this->lastIndexOfFloat(&str[1]) > -1) {
+		correctStrings.push_back(str.substr(0, this->lastIndexOfFloat(&str[1]) + 1));
+		if (!isOperandCharector(str.substr(this->lastIndexOfFloat(&str[1]) + 1))) {
+			if (str[this->lastIndexOfFloat(&str[1]) + 1] != ')') {
+				correctStrings.push_back("*");
+			}
+		}
+		return (splitMixedTerm(str.substr(this->lastIndexOfFloat(&str[1]) + 1)));
+	}
+	if (str.length() > 0) {
+		correctStrings.push_back(str);
+	}
+}
+
 void	Validate::splitMixedTerm(string str) {
-	// cout << "Splitting in mixed term >>>" << str << endl;
+	cout << "Splitting in mixed term >>>" << str << endl;
 	if (isalpha(str[0])) {
 		return (splitForAlpha(str));
 	}
 	else if (isdigit(str[0])) {
 		return (splitForDigit(str));
+	}
+	else if (str[0] == ')') {
+		if (str[1] == '^') {
+			return (splitForClosingBracket(str));
+		}
+		return (splitForOneChar(str));	
 	}
 	else if (str[0] == '+' || str[0] == '-' || str[0] == '*'
 		|| str[0] == '/' || str[0] == '(' || str[0] == ')' || str[0] == '%') {
@@ -456,7 +477,7 @@ bool	Validate::checkVariables(polynomial *equation, Instruction instructions) {
 	return (true);
 }
 
-// 5 ( 10 - 1 + ( 1 * 5 ) + 5 ) + 5 ( 1 )
+// 5 ( 10 - x + ( x * 5 ) + 5 ) + 5 ( x )
 
 bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction instructions) {
 	// cout << "String received :: " << poly << endl;
@@ -466,9 +487,9 @@ bool	Validate::isPolynomialValid(string poly, polynomial *equation, Instruction 
 	}
 	splitString(poly);
 	correctSplit();
-	// for (size_t i = 0; i < correctStrings.size(); i++) {
-	// 	cout << "String :: " << correctStrings.at(i) << endl;
-	// }
+	for (size_t i = 0; i < correctStrings.size(); i++) {
+		cout << "String :: " << correctStrings.at(i) << endl;
+	}
 	if (!this->checkPolynomialAuthentacity()) {
 		cout << "Authentication failed" << endl;
 		return (false);

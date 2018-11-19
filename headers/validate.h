@@ -23,6 +23,7 @@ class	Validate {
         void            splitForDigit(string str);
         void            splitForEqualSign(string str);
         void            splitForOneChar(string str);
+        void            splitForClosingBracket(string str);
         void            addexpression(polynomial *equation);
         static char     oneVar;
         bool            sameVariables(char *poly);
